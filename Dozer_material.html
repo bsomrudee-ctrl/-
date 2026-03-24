@@ -352,6 +352,17 @@
             return '';
         }
 
+        function isMeaningfulRow(item) {
+            const wo = getValue(item, ['รายการผลิต ID']);
+            const model = getValue(item, ['ModelNo', 'Model No']);
+            const plan = getValue(item, ['แผนผลิตประจำเดือน ID']);
+            const qty = parseInt(item.QTY) || 0;
+            const dueDate = getValue(item, ['วันที่กำหนดใช้ของ']);
+            const inv = getValue(item, ['INV', 'Inv', 'inv']);
+
+            return !!(wo || model || plan || dueDate || inv || qty > 0);
+        }
+
         function getStatusText(item) {
             const remark02 = String(item['Remark_02'] || '').trim();
             const remark05 = String(item['Remark_05'] || '').trim();
@@ -509,8 +520,10 @@
             const summary = document.getElementById('summaryArea');
             summary.style.display = 'grid';
 
-            const pendingRows = sortPendingRows(rawData.filter(isPending));
-            const completeRows = sortCompletedRows(rawData.filter(isCompletedWithin15Days));
+            const cleanedData = rawData.filter(isMeaningfulRow);
+
+            const pendingRows = sortPendingRows(cleanedData.filter(isPending));
+            const completeRows = sortCompletedRows(cleanedData.filter(isCompletedWithin15Days));
             const visibleRows = [...pendingRows, ...completeRows];
 
             const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr.QTY) || 0), 0);

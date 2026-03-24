@@ -33,7 +33,7 @@
         .container {
             width: 100%;
             max-width: 100%;
-            padding: 16px; /* ลดขอบ */
+            padding: 16px;
             text-align: center;
         }
 
@@ -120,7 +120,7 @@
             display: block;
         }
 
-        /* 🔥 เอากรอบออก */
+        /* iframe เต็มจอ */
         .embed-card {
             background: transparent;
             padding: 0;
@@ -129,28 +129,29 @@
             width: 100%;
         }
 
-        /* 🔥 เต็มจอจริง */
         .embed-frame {
             width: 100%;
             height: calc(100vh - 140px);
             border: none;
             border-radius: 0;
-            display: block;
         }
 
-        /* 🔥 ปุ่มพอดี */
-        .back-button {
+        /* ปุ่มกลับ (มินิมอล) */
+        .top-back-button {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #eee;
-            box-shadow: var(--shadow);
-            margin-top: 16px;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            background: transparent;
+            border: none;
             cursor: pointer;
+            margin-bottom: 10px;
             font-family: 'Kanit', sans-serif;
+        }
+
+        .top-back-button:hover {
+            color: var(--primary-text);
         }
 
         .footer {
@@ -196,36 +197,38 @@
     <!-- หน้า Disc -->
     <div id="disc-page" class="page">
 
+        <button onclick="showPage('dashboard-page')" class="top-back-button">
+            ← กลับ
+        </button>
+
         <div class="header-section">
             <div class="logo-container" style="background: var(--pastel-blue)">💿</div>
             <h1>เบิกใบผาน</h1>
+            <p>รายละเอียดและแบบฟอร์มการเบิก</p>
         </div>
 
         <div class="embed-card">
             <iframe src="Disc_material.html" class="embed-frame"></iframe>
         </div>
 
-        <button onclick="showPage('dashboard-page')" class="back-button">
-            ← กลับหน้าหลัก
-        </button>
-
     </div>
 
     <!-- หน้า Dozer -->
     <div id="dozer-page" class="page">
 
+        <button onclick="showPage('dashboard-page')" class="top-back-button">
+            ← กลับ
+        </button>
+
         <div class="header-section">
             <div class="logo-container" style="background: var(--pastel-orange)">🚜</div>
             <h1>เบิกใบดันดิน</h1>
+            <p>รายละเอียดและแบบฟอร์มการเบิก</p>
         </div>
 
         <div class="embed-card">
             <iframe src="Dozer_material.html" class="embed-frame"></iframe>
         </div>
-
-        <button onclick="showPage('dashboard-page')" class="back-button">
-            ← กลับหน้าหลัก
-        </button>
 
     </div>
 

@@ -126,25 +126,25 @@
             border: none;
         }
 
-        /* 🔥 ปุ่มกลับ (ลอยซ้ายบน มินิมอล) */
+        /* 🔥 ปุ่มกลับ (พอดี + มินิมอล) */
         .top-back-button {
             position: fixed;
             top: 16px;
             left: 16px;
-            width: 36px;
-            height: 36px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1rem;
+            gap: 6px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
             color: #555;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             backdrop-filter: blur(8px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             cursor: pointer;
             z-index: 999;
+            font-family: 'Kanit', sans-serif;
             transition: all 0.2s ease;
         }
 
@@ -197,7 +197,7 @@
     <div id="disc-page" class="page">
 
         <button onclick="showPage('dashboard-page')" class="top-back-button">
-            กลับไปหน้าหลัก
+            ← หน้าหลัก
         </button>
 
         <div class="header-section">
@@ -215,7 +215,7 @@
     <div id="dozer-page" class="page">
 
         <button onclick="showPage('dashboard-page')" class="top-back-button">
-            กลับไปหน้าหลัก
+            ← หน้าหลัก
         </button>
 
         <div class="header-section">

@@ -28,6 +28,17 @@
             font-size: 1.05rem;
             border: 1px solid #c7d2fe;
         }
+        .inv-badge {
+            font-family: monospace;
+            background: #f8fafc;
+            color: #0f172a;
+            padding: 0.45rem 0.9rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            display: inline-block;
+        }
         .model-text {
             color: #1e293b;
             font-weight: 800;
@@ -230,6 +241,7 @@
                             <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
                             <th class="px-6 py-4 font-bold text-center">สถานะ</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
                             <th class="px-6 py-4 font-bold">หมายเหตุ</th>
                         </tr>
                     </thead>
@@ -267,6 +279,7 @@
                             <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
                             <th class="px-6 py-4 font-bold text-center">สถานะ</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
                             <th class="px-6 py-4 font-bold">หมายเหตุ</th>
                         </tr>
                     </thead>
@@ -360,6 +373,38 @@
             return '';
         }
 
+        function isMeaningfulRow(item) {
+            const dueDate = getValue(item, ['วันที่กำหนดใช้ของ']);
+            const modelNo = getValue(item, ['Model No', 'ModelNo']);
+            const planId = getValue(item, ['แผนผลิตประจำเดือน ID']);
+            const wo = getValue(item, ['รายการผลิต ID']);
+            const nav = getValue(item, ['NAV No']);
+            const rmNo = getValue(item, ['RM No']);
+            const rmDesc = getValue(item, ['Description RM']);
+            const desc = getValue(item, ['Description']);
+            const prodQty = getValue(item, ['จำนวนที่ต้องขึ้นผลิต']);
+            const qty = parseInt(getValue(item, ['QTY']) || '0', 10) || 0;
+            const issueDate = getValue(item, ['Remark_05']);
+            const note = getValue(item, ['Remark_07']);
+            const inv = getValue(item, ['INV', 'Inv', 'inv']);
+
+            return !!(
+                dueDate ||
+                modelNo ||
+                planId ||
+                wo ||
+                nav ||
+                rmNo ||
+                rmDesc ||
+                desc ||
+                prodQty ||
+                issueDate ||
+                note ||
+                inv ||
+                qty > 0
+            );
+        }
+
         function getStatusText(item) {
             const remark02 = String(item['Remark_02'] || '').trim();
             const remark05 = String(item['Remark_05'] || '').trim();
@@ -443,6 +488,7 @@
             const issueDate = getValue(item, ['Remark_05']) || '-';
             const note = getValue(item, ['Remark_07']) || '-';
             const qty = getValue(item, ['QTY']) || '0';
+            const invNo = getValue(item, ['INV', 'Inv', 'inv']) || '-';
 
             return `
                 <tr class="transition-colors">
@@ -499,6 +545,13 @@
                                 : `<span class="text-slate-300">-</span>`
                         }
                     </td>
+                    <td class="px-6 py-6 text-center">
+                        ${
+                            isDone
+                                ? `<span class="inv-badge">${invNo}</span>`
+                                : `<span class="text-slate-300">-</span>`
+                        }
+                    </td>
                     <td class="px-6 py-6">
                         <div class="remark-box">${note}</div>
                     </td>
@@ -528,7 +581,9 @@
         }
 
         function renderTable(data) {
-            if (!data || !data.length) {
+            const cleanedData = (data || []).filter(isMeaningfulRow);
+
+            if (!cleanedData.length) {
                 document.getElementById('summaryArea').style.display = 'none';
                 renderSection('pendingTable', 'pendingTableBody', 'pendingEmpty', [], false);
                 renderSection('completeTable', 'completeTableBody', 'completeEmpty', [], true);
@@ -537,13 +592,13 @@
 
             document.getElementById('summaryArea').style.display = 'grid';
 
-            const pendingRows = sortPendingRows(data.filter(isPending));
-            const completeRows = sortCompletedRows(data.filter(isCompletedWithin15Days));
+            const pendingRows = sortPendingRows(cleanedData.filter(isPending));
+            const completeRows = sortCompletedRows(cleanedData.filter(isCompletedWithin15Days));
             const visibleRows = [...pendingRows, ...completeRows];
 
             const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr['QTY']) || 0), 0);
-            const models = [...new Set(visibleRows.map(d => d['Model No']).filter(Boolean))].length;
-            const rms = [...new Set(visibleRows.map(d => d['RM No']).filter(Boolean))].length;
+            const models = [...new Set(visibleRows.map(d => getValue(d, ['Model No', 'ModelNo'])).filter(Boolean))].length;
+            const rms = [...new Set(visibleRows.map(d => getValue(d, ['RM No'])).filter(Boolean))].length;
 
             document.getElementById('sumQty').innerText = totalQty.toLocaleString();
             document.getElementById('sumModels').innerText = models + ' รุ่น';

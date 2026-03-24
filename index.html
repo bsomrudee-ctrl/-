@@ -1,39 +1,216 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-    <title>My Menu</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเบิกวัสดุอุปกรณ์</title>
+    <!-- Google Fonts: Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #f8f9fd;
+            --primary-text: #4a4a4a;
+            --secondary-text: #9b9b9b;
+            --pastel-blue: #e1f5fe;
+            --pastel-orange: #fff8e1;
+            --card-white: #ffffff;
+            --shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+            --accent-blue: #4fc3f7;
+            --accent-orange: #ffd54f;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: Arial;
+            font-family: 'Kanit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
             text-align: center;
-            background-color: #f5f5f5;
         }
-        h1 {
-            margin-top: 50px;
+
+        .header-section {
+            margin-bottom: 40px;
         }
-        a {
-            display: block;
-            margin: 20px;
-            padding: 15px;
-            background: #007bff;
-            color: white;
+
+        .logo-container {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: var(--shadow);
+            font-size: 1.5rem;
+        }
+
+        .header-section h1 {
+            font-weight: 500;
+            font-size: 1.6rem;
+            margin: 0;
+            color: #333;
+        }
+
+        .header-section p {
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            margin-top: 8px;
+        }
+
+        .menu-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .menu-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
             text-decoration: none;
-            width: 200px;
-            margin-left: auto;
-            margin-right: auto;
-            border-radius: 10px;
+            color: var(--primary-text);
+            border-radius: 32px;
+            background: var(--card-white);
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            position: relative;
         }
-        a:hover {
-            background: #0056b3;
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            border-color: #f0f0f0;
         }
+
+        .menu-card:active {
+            transform: scale(0.96);
+        }
+
+        /* Icon Styles */
+        .icon-wrapper {
+            width: 100px;
+            height: 100px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            transition: transform 0.5s ease;
+        }
+
+        .menu-card:hover .icon-wrapper {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        /* Specific Colors */
+        .card-disc .icon-wrapper {
+            background-color: var(--pastel-blue);
+        }
+        .card-dozer .icon-wrapper {
+            background-color: var(--pastel-orange);
+        }
+
+        .menu-title {
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .menu-subtitle {
+            font-size: 0.85rem;
+            color: var(--secondary-text);
+            margin-top: 4px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            font-size: 0.75rem;
+            color: #d1d1d1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-card {
+            animation: slideUp 0.6s ease-out both;
+        }
+
+        .card-dozer { animation-delay: 0.1s; }
     </style>
 </head>
 <body>
 
-    <h1>📁 My Dashboard</h1>
+    <div class="container">
+        <div class="header-section">
+            <div class="logo-container">📋</div>
+            <h1>รายการเบิกวัสดุ</h1>
+            <p>ระบบจัดการสต็อกอะไหล่เครื่องจักร</p>
+        </div>
 
-    <a href="Disc_material.html">Disc Material</a>
-    <a href="Dozer_material.html">Dozer Material</a>
+        <div class="menu-grid">
+            <!-- ลิงก์สำหรับ ใบผาน (Disc) -->
+            <a href="Disc_material.html" class="menu-card card-disc">
+                <div class="icon-wrapper">
+                    <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="42" fill="#4fc3f7"/>
+                        <circle cx="50" cy="48" r="42" fill="#81d4fa"/>
+                        <circle cx="50" cy="48" r="8" fill="#f8f9fd" stroke="#4fc3f7" stroke-width="2"/>
+                        <circle cx="50" cy="25" r="3" fill="#4fc3f7" opacity="0.5"/>
+                        <circle cx="50" cy="71" r="3" fill="#4fc3f7" opacity="0.5"/>
+                        <circle cx="27" cy="48" r="3" fill="#4fc3f7" opacity="0.5"/>
+                        <circle cx="73" cy="48" r="3" fill="#4fc3f7" opacity="0.5"/>
+                        <path d="M25 25C30 20 40 15 55 15" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+                    </svg>
+                </div>
+                <div class="menu-title">ใบผาน</div>
+                <div class="menu-subtitle">ชุดใบผานพรวน / ใบผานไถ</div>
+            </a>
+
+            <!-- ลิงก์สำหรับ ใบดันดิน (Dozer) -->
+            <a href="Dozer_material.html" class="menu-card card-dozer">
+                <div class="icon-wrapper">
+                    <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 70L15 35C15 32 18 30 21 30H79C82 30 85 32 85 35L90 70H10Z" fill="#ffca28"/>
+                        <rect x="10" y="68" width="80" height="6" rx="2" fill="#ffa000"/>
+                        <circle cx="25" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
+                        <circle cx="41.6" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
+                        <circle cx="58.2" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
+                        <circle cx="75" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
+                        <circle cx="20" cy="40" r="2.5" fill="#ffa000" opacity="0.6"/>
+                        <circle cx="80" cy="40" r="2.5" fill="#ffa000" opacity="0.6"/>
+                        <path d="M25 38H75" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+                    </svg>
+                </div>
+                <div class="menu-title">ใบดันดิน</div>
+                <div class="menu-subtitle">ชุดใบดันหน้า / แผ่นเหล็กดันดิน</div>
+            </a>
+        </div>
+
+        <div class="footer">
+            Digital Warehouse System
+        </div>
+    </div>
 
 </body>
 </html>

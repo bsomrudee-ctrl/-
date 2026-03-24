@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบเบิกวัสดุอุปกรณ์</title>
-    <!-- Google Fonts: Kanit -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -104,7 +103,6 @@
             transform: scale(0.96);
         }
 
-        /* Icon Styles */
         .icon-wrapper {
             width: 100px;
             height: 100px;
@@ -120,10 +118,10 @@
             transform: scale(1.15) rotate(5deg);
         }
 
-        /* Specific Colors */
         .card-disc .icon-wrapper {
             background-color: var(--pastel-blue);
         }
+
         .card-dozer .icon-wrapper {
             background-color: var(--pastel-orange);
         }
@@ -139,33 +137,6 @@
             margin-top: 4px;
         }
 
-        /* Back Button Style */
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 24px;
-            background: white;
-            color: var(--primary-text);
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 1rem;
-            box-shadow: var(--shadow);
-            margin-top: 30px;
-            transition: all 0.3s ease;
-            border: 1px solid #eee;
-            cursor: pointer;
-        }
-
-        .back-button:hover {
-            background: #f0f0f0;
-            transform: translateX(-5px);
-        }
-
-        .back-button svg {
-            margin-right: 8px;
-        }
-
         .footer {
             margin-top: 50px;
             font-size: 0.75rem;
@@ -173,28 +144,12 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-
-        /* Page Transitions */
-        .page {
-            display: none;
-            animation: slideUp 0.6s ease-out both;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- หน้าหลัก (Dashboard) -->
-        <div id="dashboard-page" class="page active">
+        <div id="dashboard-page">
             <div class="header-section">
                 <div class="logo-container">📋</div>
                 <h1>รายการเบิกวัสดุ</h1>
@@ -202,8 +157,7 @@
             </div>
 
             <div class="menu-grid">
-                <!-- ปุ่มสำหรับ ใบผาน (Disc) -->
-                <div onclick="showPage('disc-page')" class="menu-card card-disc">
+                <a href="Disc_material.html" class="menu-card card-disc">
                     <div class="icon-wrapper">
                         <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="50" cy="50" r="42" fill="#4fc3f7"/>
@@ -218,10 +172,9 @@
                     </div>
                     <div class="menu-title">ใบผาน</div>
                     <div class="menu-subtitle">ชุดใบผานพรวน / ใบผานไถ</div>
-                </div>
+                </a>
 
-                <!-- ปุ่มสำหรับ ใบดันดิน (Dozer) -->
-                <div onclick="showPage('dozer-page')" class="menu-card card-dozer">
+                <a href="Dozer_material.html" class="menu-card card-dozer">
                     <div class="icon-wrapper">
                         <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M10 70L15 35C15 32 18 30 21 30H79C82 30 85 32 85 35L90 70H10Z" fill="#ffca28"/>
@@ -237,44 +190,8 @@
                     </div>
                     <div class="menu-title">ใบดันดิน</div>
                     <div class="menu-subtitle">ชุดใบดันหน้า / แผ่นเหล็กดันดิน</div>
-                </div>
+                </a>
             </div>
-        </div>
-
-        <!-- หน้าใบผาน (Disc Detail) -->
-        <div id="disc-page" class="page">
-            <div class="header-section">
-                <div class="logo-container" style="background: var(--pastel-blue)">💿</div>
-                <h1>เบิกใบผาน</h1>
-                <p>รายละเอียดและแบบฟอร์มการเบิก</p>
-            </div>
-            
-            <div style="background: white; padding: 40px 20px; border-radius: 32px; box-shadow: var(--shadow);">
-                <p style="color: var(--secondary-text)">เนื้อหาของ Disc_material.html จะแสดงที่นี่</p>
-            </div>
-
-            <button onclick="showPage('dashboard-page')" class="back-button">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                กลับหน้าหลัก
-            </button>
-        </div>
-
-        <!-- หน้าใบดันดิน (Dozer Detail) -->
-        <div id="dozer-page" class="page">
-            <div class="header-section">
-                <div class="logo-container" style="background: var(--pastel-orange)">🚜</div>
-                <h1>เบิกใบดันดิน</h1>
-                <p>รายละเอียดและแบบฟอร์มการเบิก</p>
-            </div>
-
-            <div style="background: white; padding: 40px 20px; border-radius: 32px; box-shadow: var(--shadow);">
-                <p style="color: var(--secondary-text)">เนื้อหาของ Dozer_material.html จะแสดงที่นี่</p>
-            </div>
-
-            <button onclick="showPage('dashboard-page')" class="back-button">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                กลับหน้าหลัก
-            </button>
         </div>
 
         <div class="footer">
@@ -282,17 +199,5 @@
         </div>
     </div>
 
-    <script>
-        function showPage(pageId) {
-            // ซ่อนทุกหน้า
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            // แสดงหน้าที่ต้องการ
-            document.getElementById(pageId).classList.add('active');
-            // เลื่อนขึ้นบนสุด
-            window.scrollTo(0, 0);
-        }
-    </script>
 </body>
 </html>

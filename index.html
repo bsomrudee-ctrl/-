@@ -15,8 +15,6 @@
             --pastel-orange: #fff8e1;
             --card-white: #ffffff;
             --shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
-            --accent-blue: #4fc3f7;
-            --accent-orange: #ffd54f;
         }
 
         * {
@@ -35,12 +33,12 @@
         .container {
             width: 100%;
             max-width: 100%;
-            padding: 24px;
+            padding: 16px; /* ลดขอบ */
             text-align: center;
         }
 
         .header-section {
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .logo-container {
@@ -60,13 +58,11 @@
             font-weight: 500;
             font-size: 1.6rem;
             margin: 0;
-            color: #333;
         }
 
         .header-section p {
             font-size: 0.9rem;
             color: var(--secondary-text);
-            margin-top: 8px;
         }
 
         .menu-grid {
@@ -82,25 +78,10 @@
             align-items: center;
             justify-content: center;
             padding: 32px 20px;
-            text-decoration: none;
-            color: var(--primary-text);
             border-radius: 32px;
             background: var(--card-white);
             box-shadow: var(--shadow);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid transparent;
-            position: relative;
             cursor: pointer;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-            border-color: #f0f0f0;
-        }
-
-        .menu-card:active {
-            transform: scale(0.96);
         }
 
         .icon-wrapper {
@@ -111,11 +92,6 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 18px;
-            transition: transform 0.5s ease;
-        }
-
-        .menu-card:hover .icon-wrapper {
-            transform: scale(1.15) rotate(5deg);
         }
 
         .card-disc .icon-wrapper {
@@ -128,201 +104,143 @@
 
         .menu-title {
             font-size: 1.4rem;
-            font-weight: 500;
         }
 
         .menu-subtitle {
             font-size: 0.85rem;
             color: var(--secondary-text);
-            margin-top: 4px;
-        }
-
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: auto;
-            min-width: 0;
-            padding: 12px 24px;
-            background: white;
-            color: var(--primary-text);
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 1rem;
-            box-shadow: var(--shadow);
-            margin-top: 24px;
-            transition: all 0.3s ease;
-            border: 1px solid #eee;
-            cursor: pointer;
-            font-family: 'Kanit', sans-serif;
-        }
-
-        .back-button:hover {
-            background: #f0f0f0;
-            transform: translateX(-5px);
-        }
-
-        .back-button svg {
-            margin-right: 8px;
-        }
-
-        .footer {
-            margin-top: 50px;
-            font-size: 0.75rem;
-            color: #d1d1d1;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .page {
             display: none;
             width: 100%;
-            animation: slideUp 0.6s ease-out both;
         }
 
         .page.active {
             display: block;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* 🔥 เอากรอบออก */
         .embed-card {
-            background: white;
-            padding: 16px;
-            border-radius: 32px;
-            box-shadow: var(--shadow);
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
             width: 100%;
-            max-width: none;
-            margin: 0 auto;
         }
 
+        /* 🔥 เต็มจอจริง */
         .embed-frame {
             width: 100%;
-            height: 85vh;
+            height: calc(100vh - 140px);
             border: none;
-            border-radius: 20px;
-            background: white;
+            border-radius: 0;
             display: block;
         }
 
-        .detail-page-wrap {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
+        /* 🔥 ปุ่มพอดี */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #eee;
+            box-shadow: var(--shadow);
+            margin-top: 16px;
+            cursor: pointer;
+            font-family: 'Kanit', sans-serif;
         }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #d1d1d1;
+        }
+
     </style>
 </head>
+
 <body>
 
-    <div class="container">
-        <!-- หน้าหลัก -->
-        <div id="dashboard-page" class="page active">
-            <div class="header-section">
-                <div class="logo-container">📋</div>
-                <h1>รายการเบิกวัสดุ</h1>
-                <p>ระบบจัดการสต็อกอะไหล่เครื่องจักร</p>
-            </div>
+<div class="container">
 
-            <div class="menu-grid">
-                <div onclick="showPage('disc-page')" class="menu-card card-disc">
-                    <div class="icon-wrapper">
-                        <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="50" cy="50" r="42" fill="#4fc3f7"/>
-                            <circle cx="50" cy="48" r="42" fill="#81d4fa"/>
-                            <circle cx="50" cy="48" r="8" fill="#f8f9fd" stroke="#4fc3f7" stroke-width="2"/>
-                            <circle cx="50" cy="25" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <circle cx="50" cy="71" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <circle cx="27" cy="48" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <circle cx="73" cy="48" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <path d="M25 25C30 20 40 15 55 15" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
-                        </svg>
-                    </div>
-                    <div class="menu-title">ใบผาน</div>
-                    <div class="menu-subtitle">ชุดใบผานพรวน / ใบผานไถ</div>
-                </div>
+    <!-- หน้าเมนู -->
+    <div id="dashboard-page" class="page active">
 
-                <div onclick="showPage('dozer-page')" class="menu-card card-dozer">
-                    <div class="icon-wrapper">
-                        <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 70L15 35C15 32 18 30 21 30H79C82 30 85 32 85 35L90 70H10Z" fill="#ffca28"/>
-                            <rect x="10" y="68" width="80" height="6" rx="2" fill="#ffa000"/>
-                            <circle cx="25" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="41.6" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="58.2" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="75" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="20" cy="40" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="80" cy="40" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <path d="M25 38H75" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-                        </svg>
-                    </div>
-                    <div class="menu-title">ใบดันดิน</div>
-                    <div class="menu-subtitle">ชุดใบดันหน้า / แผ่นเหล็กดันดิน</div>
-                </div>
-            </div>
+        <div class="header-section">
+            <div class="logo-container">📋</div>
+            <h1>รายการเบิกวัสดุ</h1>
+            <p>ระบบจัดการสต็อกอะไหล่เครื่องจักร</p>
         </div>
 
-        <!-- หน้าใบผาน -->
-        <div id="disc-page" class="page">
-            <div class="detail-page-wrap">
-                <div class="header-section">
-                    <div class="logo-container" style="background: var(--pastel-blue)">💿</div>
-                    <h1>เบิกใบผาน</h1>
-                    <p>รายละเอียดและแบบฟอร์มการเบิก</p>
-                </div>
+        <div class="menu-grid">
 
-                <div class="embed-card">
-                    <iframe src="Disc_material.html" class="embed-frame" title="Disc Material"></iframe>
-                </div>
-
-                <button onclick="showPage('dashboard-page')" class="back-button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    กลับหน้าหลัก
-                </button>
+            <div onclick="showPage('disc-page')" class="menu-card card-disc">
+                <div class="icon-wrapper">💿</div>
+                <div class="menu-title">ใบผาน</div>
+                <div class="menu-subtitle">ชุดใบผานพรวน</div>
             </div>
-        </div>
 
-        <!-- หน้าใบดันดิน -->
-        <div id="dozer-page" class="page">
-            <div class="detail-page-wrap">
-                <div class="header-section">
-                    <div class="logo-container" style="background: var(--pastel-orange)">🚜</div>
-                    <h1>เบิกใบดันดิน</h1>
-                    <p>รายละเอียดและแบบฟอร์มการเบิก</p>
-                </div>
-
-                <div class="embed-card">
-                    <iframe src="Dozer_material.html" class="embed-frame" title="Dozer Material"></iframe>
-                </div>
-
-                <button onclick="showPage('dashboard-page')" class="back-button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    กลับหน้าหลัก
-                </button>
+            <div onclick="showPage('dozer-page')" class="menu-card card-dozer">
+                <div class="icon-wrapper">🚜</div>
+                <div class="menu-title">ใบดันดิน</div>
+                <div class="menu-subtitle">ชุดใบดันหน้า</div>
             </div>
+
         </div>
 
-        <div class="footer">
-            Digital Warehouse System
-        </div>
     </div>
 
-    <script>
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0, 0);
-        }
-    </script>
+    <!-- หน้า Disc -->
+    <div id="disc-page" class="page">
+
+        <div class="header-section">
+            <div class="logo-container" style="background: var(--pastel-blue)">💿</div>
+            <h1>เบิกใบผาน</h1>
+        </div>
+
+        <div class="embed-card">
+            <iframe src="Disc_material.html" class="embed-frame"></iframe>
+        </div>
+
+        <button onclick="showPage('dashboard-page')" class="back-button">
+            ← กลับหน้าหลัก
+        </button>
+
+    </div>
+
+    <!-- หน้า Dozer -->
+    <div id="dozer-page" class="page">
+
+        <div class="header-section">
+            <div class="logo-container" style="background: var(--pastel-orange)">🚜</div>
+            <h1>เบิกใบดันดิน</h1>
+        </div>
+
+        <div class="embed-card">
+            <iframe src="Dozer_material.html" class="embed-frame"></iframe>
+        </div>
+
+        <button onclick="showPage('dashboard-page')" class="back-button">
+            ← กลับหน้าหลัก
+        </button>
+
+    </div>
+
+    <div class="footer">
+        Digital Warehouse System
+    </div>
+
+</div>
+
+<script>
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+}
+</script>
+
 </body>
 </html>

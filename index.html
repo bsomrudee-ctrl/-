@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเบิกวัสดุอุปกรณ์</title>
+    <title>เบิกใบผาน</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,16 +11,12 @@
             --primary-text: #4a4a4a;
             --secondary-text: #9b9b9b;
             --pastel-blue: #e1f5fe;
-            --pastel-orange: #fff8e1;
             --card-white: #ffffff;
             --shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
-            --accent-blue: #4fc3f7;
-            --accent-orange: #ffd54f;
         }
 
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -30,25 +26,24 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
             min-height: 100vh;
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 700px;
             padding: 24px;
-            text-align: center;
         }
 
         .header-section {
-            margin-bottom: 40px;
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         .logo-container {
             width: 60px;
             height: 60px;
-            background: white;
+            background: var(--pastel-blue);
             border-radius: 18px;
             display: flex;
             align-items: center;
@@ -58,146 +53,94 @@
             font-size: 1.5rem;
         }
 
-        .header-section h1 {
-            font-weight: 500;
-            font-size: 1.6rem;
-            margin: 0;
-            color: #333;
-        }
-
-        .header-section p {
-            font-size: 0.9rem;
-            color: var(--secondary-text);
-            margin-top: 8px;
-        }
-
-        .menu-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .menu-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 32px 20px;
-            text-decoration: none;
-            color: var(--primary-text);
-            border-radius: 32px;
+        .card {
             background: var(--card-white);
+            border-radius: 24px;
             box-shadow: var(--shadow);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid transparent;
-            position: relative;
-            cursor: pointer;
+            padding: 24px;
         }
 
-        .menu-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-            border-color: #f0f0f0;
+        .form-group {
+            margin-bottom: 16px;
         }
 
-        .menu-card:active {
-            transform: scale(0.96);
-        }
-
-        .icon-wrapper {
-            width: 100px;
-            height: 100px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 18px;
-            transition: transform 0.5s ease;
-        }
-
-        .menu-card:hover .icon-wrapper {
-            transform: scale(1.15) rotate(5deg);
-        }
-
-        .card-disc .icon-wrapper {
-            background-color: var(--pastel-blue);
-        }
-
-        .card-dozer .icon-wrapper {
-            background-color: var(--pastel-orange);
-        }
-
-        .menu-title {
-            font-size: 1.4rem;
+        label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 500;
         }
 
-        .menu-subtitle {
-            font-size: 0.85rem;
-            color: var(--secondary-text);
-            margin-top: 4px;
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e5e5e5;
+            border-radius: 14px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1rem;
         }
 
-        .footer {
-            margin-top: 50px;
-            font-size: 0.75rem;
-            color: #d1d1d1;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: white;
+            color: var(--primary-text);
+            border-radius: 16px;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 16px;
+            background: #4fc3f7;
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <div id="dashboard-page">
-            <div class="header-section">
-                <div class="logo-container">📋</div>
-                <h1>รายการเบิกวัสดุ</h1>
-                <p>ระบบจัดการสต็อกอะไหล่เครื่องจักร</p>
-            </div>
-
-            <div class="menu-grid">
-                <a href="Disc_material.html" class="menu-card card-disc">
-                    <div class="icon-wrapper">
-                        <svg width="70" height="70" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="50" cy="50" r="42" fill="#4fc3f7"/>
-                            <circle cx="50" cy="48" r="42" fill="#81d4fa"/>
-                            <circle cx="50" cy="48" r="8" fill="#f8f9fd" stroke="#4fc3f7" stroke-width="2"/>
-                            <circle cx="50" cy="25" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <circle cx="50" cy="71" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <circle cx="27" cy="48" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <circle cx="73" cy="48" r="3" fill="#4fc3f7" opacity="0.5"/>
-                            <path d="M25 25C30 20 40 15 55 15" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
-                        </svg>
-                    </div>
-                    <div class="menu-title">ใบผาน</div>
-                    <div class="menu-subtitle">ชุดใบผานพรวน / ใบผานไถ</div>
-                </a>
-
-                <a href="Dozer_material.html" class="menu-card card-dozer">
-                    <div class="icon-wrapper">
-                        <svg width="75" height="75" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 70L15 35C15 32 18 30 21 30H79C82 30 85 32 85 35L90 70H10Z" fill="#ffca28"/>
-                            <rect x="10" y="68" width="80" height="6" rx="2" fill="#ffa000"/>
-                            <circle cx="25" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="41.6" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="58.2" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="75" cy="60" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="20" cy="40" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <circle cx="80" cy="40" r="2.5" fill="#ffa000" opacity="0.6"/>
-                            <path d="M25 38H75" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-                        </svg>
-                    </div>
-                    <div class="menu-title">ใบดันดิน</div>
-                    <div class="menu-subtitle">ชุดใบดันหน้า / แผ่นเหล็กดันดิน</div>
-                </a>
-            </div>
+        <div class="header-section">
+            <div class="logo-container">💿</div>
+            <h1>เบิกใบผาน</h1>
+            <p>รายละเอียดและแบบฟอร์มการเบิก</p>
         </div>
 
-        <div class="footer">
-            Digital Warehouse System
+        <div class="card">
+            <div class="form-group">
+                <label>ชื่อผู้เบิก</label>
+                <input type="text" placeholder="กรอกชื่อผู้เบิก">
+            </div>
+
+            <div class="form-group">
+                <label>แผนก</label>
+                <input type="text" placeholder="กรอกแผนก">
+            </div>
+
+            <div class="form-group">
+                <label>รายการวัสดุ</label>
+                <input type="text" value="ใบผาน">
+            </div>
+
+            <div class="form-group">
+                <label>จำนวน</label>
+                <input type="number" placeholder="กรอกจำนวน">
+            </div>
+
+            <div class="form-group">
+                <label>หมายเหตุ</label>
+                <textarea rows="4" placeholder="รายละเอียดเพิ่มเติม"></textarea>
+            </div>
+
+            <button class="submit-button">บันทึกรายการเบิก</button>
         </div>
+
+        <a href="index.html" class="back-button">← กลับหน้าหลัก</a>
     </div>
-
 </body>
 </html>

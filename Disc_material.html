@@ -4,248 +4,672 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ระบบติดตามรายการใบเบิก - ใบผาน</title>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
         body {
             font-family: 'Prompt', sans-serif;
             background-color: #f1f5f9;
         }
-
         .table-container {
             background: white;
             border-radius: 1.5rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
             overflow: hidden;
         }
-
-        /* 🔥 ปรับให้พอดีจอ */
-        table {
-            table-layout: fixed;
-            width: 100%;
-        }
-
-        th, td {
-            padding: 14px 12px !important;
-        }
-
-        th {
-            font-size: 11px;
-        }
-
-        td {
-            font-size: 13px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
         .wo-badge {
             font-family: monospace;
             background: #eef2ff;
             color: #4338ca;
-            padding: 0.35rem 0.7rem;
+            padding: 0.5rem 1rem;
             border-radius: 0.75rem;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1.05rem;
             border: 1px solid #c7d2fe;
         }
-
+        .inv-badge {
+            font-family: monospace;
+            background: #f8fafc;
+            color: #0f172a;
+            padding: 0.45rem 0.9rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            display: inline-block;
+        }
         .model-text {
-            font-size: 1.05rem;
+            color: #1e293b;
             font-weight: 800;
+            font-size: 1.2rem;
         }
-
         .plan-name {
-            font-size: 0.75rem;
             color: #64748b;
+            font-size: 0.85rem;
         }
-
         .rm-text {
-            font-size: 0.75rem;
+            color: #0f172a;
+            font-size: 0.8rem;
             font-weight: 600;
         }
-
         .qty-circle {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
+            background: #f8fafc;
             border: 2px solid #e2e8f0;
+            width: 52px;
+            height: 52px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 50%;
             font-weight: 700;
-            font-size: 0.9rem;
+            color: #0f172a;
         }
-
         .date-box {
-            min-width: 90px;
-            font-size: 0.75rem;
             background: #fff7ed;
             border: 1px solid #ffedd5;
+            color: #9a3412;
+            padding: 0.5rem;
             border-radius: 0.75rem;
-            padding: 6px;
+            text-align: center;
+            min-width: 110px;
         }
-
         .date-box-green {
             background: #ecfdf5;
             border: 1px solid #bbf7d0;
             color: #047857;
         }
-
-        .status-pill {
-            font-size: 0.7rem;
-            padding: 0.3rem 0.6rem;
-            border-radius: 999px;
-            font-weight: 700;
+        tr:hover {
+            background-color: #f8faff !important;
         }
-
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 90px;
+        }
         .status-pending {
             background: #fff7ed;
             color: #c2410c;
+            border: 1px solid #fed7aa;
         }
-
         .status-complete {
             background: #dcfce7;
             color: #047857;
+            border: 1px solid #86efac;
         }
-
+        .status-default {
+            background: #f8fafc;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
         .remark-box {
-            font-size: 0.75rem;
-            min-width: 140px;
-            max-width: 200px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            padding: 0.75rem 0.9rem;
+            border-radius: 0.9rem;
+            font-size: 0.82rem;
+            line-height: 1.35rem;
+            min-width: 180px;
+            max-width: 260px;
+            white-space: normal;
+            word-break: break-word;
         }
-
-        .inv-badge {
-            font-size: 0.85rem;
+        .section-header-pending {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+        }
+        .section-header-complete {
+            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+        }
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: #4338ca;
         }
-
+        .section-badge-pending {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fdba74;
+        }
+        .section-badge-complete {
+            background: #dcfce7;
+            color: #047857;
+            border: 1px solid #86efac;
+        }
+        .empty-substate {
+            padding: 36px 20px;
+            text-align: center;
+            color: #94a3b8;
+        }
     </style>
 </head>
-
 <body class="p-4 md:p-8">
 
-<div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-indigo-600 text-white p-1 rounded-lg">
+                        <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                    </span>
+                    <h1 class="text-2xl font-bold text-slate-800">รายการใบเบิกประจำวัน - ใบผาน</h1>
+                </div>
+                <p class="text-slate-500 text-sm ml-8">เช็ควันที่กำหนดใช้ เลข WO รุ่น และ RM เพื่อการเบิกจ่ายที่แม่นยำ</p>
+            </div>
 
-    <h1 class="text-2xl font-bold mb-6">รายการใบเบิกประจำวัน - ใบผาน</h1>
+            <div class="flex gap-2">
+                <button id="refreshBtn" class="flex items-center gap-2 cursor-pointer bg-indigo-600 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    รีเฟรชข้อมูล
+                </button>
+            </div>
+        </header>
 
-    <div class="table-container">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="bg-slate-50 text-slate-500 uppercase">
-                        <th>วันที่</th>
-                        <th>MODEL</th>
-                        <th>WO</th>
-                        <th>RM</th>
-                        <th>QTY</th>
-                        <th>สถานะ</th>
-                        <th>วันที่เบิก</th>
-                        <th>INV</th>
-                    </tr>
-                </thead>
-
-                <tbody id="tableBody"></tbody>
-            </table>
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+            <div id="statusText" class="inline-flex items-center gap-2 text-sm text-slate-500">
+                <i data-lucide="loader-circle" class="w-4 h-4"></i>
+                <span>กำลังโหลดข้อมูล...</span>
+            </div>
+            <div class="text-right">
+                <div id="lastUpdated" class="text-slate-400 text-xs">อัปเดตล่าสุด: -</div>
+                <div id="sheetUpdated" class="text-slate-400 text-xs">ข้อมูลจากชีต: -</div>
+            </div>
         </div>
+
+        <div id="summaryArea" class="hidden grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-2xl border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">จำนวนรุ่น</p>
+                <p id="sumModels" class="text-xl font-bold text-slate-800">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">รวมจำนวนเบิก (ตัว)</p>
+                <p id="sumQty" class="text-xl font-bold text-indigo-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">จำนวนรายการทั้งหมด</p>
+                <p id="sumRows" class="text-xl font-bold text-slate-800">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">จำนวน RM</p>
+                <p id="sumRm" class="text-xl font-bold text-slate-800">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-amber-100">
+                <p class="text-[10px] uppercase font-bold text-amber-500 mb-1">รอเบิก</p>
+                <p id="sumPending" class="text-xl font-bold text-amber-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-emerald-100">
+                <p class="text-[10px] uppercase font-bold text-emerald-500 mb-1">เบิกแล้ว (15 วัน)</p>
+                <p id="sumComplete" class="text-xl font-bold text-emerald-600">-</p>
+            </div>
+        </div>
+
+        <!-- SECTION 1 : รอเบิก -->
+        <div class="table-container mb-8">
+            <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3 section-header-pending">
+                <div class="flex items-center gap-3">
+                    <span class="section-badge section-badge-pending">
+                        <i data-lucide="clock-3" class="w-4 h-4"></i>
+                        รอเบิก
+                    </span>
+                    <h2 class="font-bold text-slate-700 text-lg">รายการที่รอเบิกทั้งหมด</h2>
+                </div>
+                <div id="pendingCountText" class="text-slate-500 text-sm">0 รายการ</div>
+            </div>
+
+            <div id="pendingEmpty" class="empty-substate">
+                <i data-lucide="inbox" class="w-10 h-10 text-slate-200 mx-auto mb-3"></i>
+                <p>ไม่มีรายการรอเบิก</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="pendingTable" style="display:none;">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (Model & Plan)</th>
+                            <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูล RM</th>
+                            <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
+                            <th class="px-6 py-4 font-bold text-center">สถานะ</th>
+                            <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
+                            <th class="px-6 py-4 font-bold">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION 2 : เบิกแล้ว -->
+        <div class="table-container">
+            <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3 section-header-complete">
+                <div class="flex items-center gap-3">
+                    <span class="section-badge section-badge-complete">
+                        <i data-lucide="badge-check" class="w-4 h-4"></i>
+                        เบิกแล้ว
+                    </span>
+                    <h2 class="font-bold text-slate-700 text-lg">รายการที่เบิกแล้ว ย้อนหลัง 15 วัน</h2>
+                </div>
+                <div id="completeCountText" class="text-slate-500 text-sm">0 รายการ</div>
+            </div>
+
+            <div id="completeEmpty" class="empty-substate">
+                <i data-lucide="archive" class="w-10 h-10 text-slate-200 mx-auto mb-3"></i>
+                <p>ไม่มีรายการเบิกแล้วในช่วง 15 วันล่าสุด</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="completeTable" style="display:none;">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (Model & Plan)</th>
+                            <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูล RM</th>
+                            <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
+                            <th class="px-6 py-4 font-bold text-center">สถานะ</th>
+                            <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
+                            <th class="px-6 py-4 font-bold">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="completeTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="mt-6 text-center text-slate-400 text-xs">
+            ออกแบบเพื่อฝ่ายผลิตและสโตร์ - Dashboard รายการเบิกใบผาน
+        </footer>
     </div>
 
-</div>
+    <script>
+        lucide.createIcons();
 
-<script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCi9Bz5b0l3uWwBWhKfyuLTuyKV3MeTSSIMvj8Z98hqbgl3yGUo7fsR8zyxaAmboI/exec";
+        const REFRESH_INTERVAL = 10000;
+        const COMPLETED_LOOKBACK_DAYS = 15;
 
-const WEB_APP_URL = "PUT_YOUR_URL_HERE";
+        let currentVersion = null;
+        let currentRows = [];
+        let isLoading = false;
 
-function getStatusText(item) {
-    if (item.Remark_05) return 'เบิกแล้ว';
-    return 'รอเบิก';
-}
+        document.getElementById('refreshBtn').addEventListener('click', () => loadData(true));
 
-function getStatusClass(status) {
-    return status === 'เบิกแล้ว' ? 'status-complete' : 'status-pending';
-}
+        function parseFlexibleDate(dateValue) {
+            if (!dateValue) return null;
 
-function buildRow(item) {
+            const raw = String(dateValue).trim();
+            if (!raw) return null;
 
-    const status = getStatusText(item);
-
-    return `
-    <tr>
-
-        <td>
-            <div class="date-box">
-                ${item['วันที่กำหนดใช้ของ'] || '-'}
-            </div>
-        </td>
-
-        <td>
-            <div class="model-text">${item['Model No'] || '-'}</div>
-            <div class="plan-name">${item['แผนผลิตประจำเดือน ID'] || '-'}</div>
-        </td>
-
-        <td>
-            <div class="wo-badge">${item['รายการผลิต ID'] || '-'}</div>
-        </td>
-
-        <td>
-            <div class="rm-text">${item['RM No'] || '-'}</div>
-        </td>
-
-        <td>
-            <div class="qty-circle">${item.QTY || 0}</div>
-        </td>
-
-        <td>
-            <span class="status-pill ${getStatusClass(status)}">
-                ${status}
-            </span>
-        </td>
-
-        <td>
-            ${
-                status === 'เบิกแล้ว'
-                ? `<div class="date-box-green">${item['Remark_05']}</div>`
-                : '-'
+            if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
+                const [d, m, y] = raw.split('/').map(Number);
+                const date = new Date(y, m - 1, d);
+                return isNaN(date) ? null : date;
             }
-        </td>
 
-        <td>
-            ${
-                status === 'เบิกแล้ว'
-                ? `<span class="inv-badge">${item['INV'] || '-'}</span>`
-                : '-'
+            const direct = new Date(raw);
+            if (!isNaN(direct)) return direct;
+
+            const parts = raw.split(/[\/\-]/);
+            if (parts.length === 3) {
+                let [a, b, c] = parts.map(Number);
+                if (!a || !b || !c) return null;
+
+                if (String(c).length === 4) {
+                    const ddmmyyyy = new Date(c, b - 1, a);
+                    if (!isNaN(ddmmyyyy)) return ddmmyyyy;
+                }
             }
-        </td>
 
-    </tr>
-    `;
-}
+            return null;
+        }
 
-async function loadData() {
+        function formatDate(dateValue) {
+            if (!dateValue) return '-';
 
-    const res = await fetch(WEB_APP_URL);
-    const data = await res.json();
+            const date = parseFlexibleDate(dateValue);
+            if (!date || isNaN(date)) return dateValue;
 
-    const rows = data.rows || data;
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
 
-    const table = document.getElementById('tableBody');
-    table.innerHTML = '';
+        function formatDateTime(dateValue) {
+            if (!dateValue) return '-';
+            const date = parseFlexibleDate(dateValue);
+            if (!date || isNaN(date)) return dateValue;
+            return date.toLocaleString('th-TH');
+        }
 
-    rows.forEach(item => {
-        table.insertAdjacentHTML('beforeend', buildRow(item));
-    });
+        function setStatus(message, icon = 'info') {
+            const statusText = document.getElementById('statusText');
+            statusText.innerHTML = `
+                <i data-lucide="${icon}" class="w-4 h-4"></i>
+                <span>${message}</span>
+            `;
+            lucide.createIcons();
+        }
 
-}
+        function getValue(item, keys = []) {
+            for (const key of keys) {
+                if (item[key] !== undefined && item[key] !== null && String(item[key]).trim() !== '') {
+                    return item[key];
+                }
+            }
+            return '';
+        }
 
-loadData();
+        function isMeaningfulRow(item) {
+            const dueDate = getValue(item, ['วันที่กำหนดใช้ของ']);
+            const modelNo = getValue(item, ['Model No', 'ModelNo']);
+            const planId = getValue(item, ['แผนผลิตประจำเดือน ID']);
+            const wo = getValue(item, ['รายการผลิต ID']);
+            const nav = getValue(item, ['NAV No']);
+            const rmNo = getValue(item, ['RM No']);
+            const rmDesc = getValue(item, ['Description RM']);
+            const desc = getValue(item, ['Description']);
+            const prodQty = getValue(item, ['จำนวนที่ต้องขึ้นผลิต']);
+            const qty = parseInt(getValue(item, ['QTY']) || '0', 10) || 0;
+            const issueDate = getValue(item, ['Remark_05']);
+            const note = getValue(item, ['Remark_07']);
+            const inv = getValue(item, ['INV', 'Inv', 'inv']);
 
-</script>
+            return !!(
+                dueDate ||
+                modelNo ||
+                planId ||
+                wo ||
+                nav ||
+                rmNo ||
+                rmDesc ||
+                desc ||
+                prodQty ||
+                issueDate ||
+                note ||
+                inv ||
+                qty > 0
+            );
+        }
 
+        function getStatusText(item) {
+            const remark02 = String(item['Remark_02'] || '').trim();
+            const remark05 = String(item['Remark_05'] || '').trim();
+
+            if (!remark02) return 'รอเบิก';
+
+            const text = remark02.toLowerCase();
+
+            if (
+                text.includes('เบิกแล้ว') ||
+                text.includes('complete') ||
+                text.includes('completed') ||
+                text.includes('done') ||
+                remark05
+            ) {
+                return 'เบิกแล้ว';
+            }
+
+            return 'รอเบิก';
+        }
+
+        function getStatusClass(statusText) {
+            const text = String(statusText || '').trim().toLowerCase();
+
+            if (text.includes('เบิกแล้ว')) return 'status-complete';
+            if (text.includes('รอเบิก')) return 'status-pending';
+            return 'status-default';
+        }
+
+        function isPending(item) {
+            return getStatusText(item) === 'รอเบิก';
+        }
+
+        function isCompleted(item) {
+            return getStatusText(item) === 'เบิกแล้ว';
+        }
+
+        function isCompletedWithin15Days(item) {
+            if (!isCompleted(item)) return false;
+
+            const issueDate = parseFlexibleDate(item['Remark_05']);
+            if (!issueDate) return false;
+
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            start.setDate(start.getDate() - COMPLETED_LOOKBACK_DAYS);
+
+            return issueDate >= start && issueDate <= today;
+        }
+
+        function sortPendingRows(rows) {
+            return [...rows].sort((a, b) => {
+                const aDate = parseFlexibleDate(a['วันที่กำหนดใช้ของ']) || new Date(8640000000000000);
+                const bDate = parseFlexibleDate(b['วันที่กำหนดใช้ของ']) || new Date(8640000000000000);
+                return aDate - bDate;
+            });
+        }
+
+        function sortCompletedRows(rows) {
+            return [...rows].sort((a, b) => {
+                const aDate = parseFlexibleDate(a['Remark_05']) || new Date(0);
+                const bDate = parseFlexibleDate(b['Remark_05']) || new Date(0);
+                return bDate - aDate;
+            });
+        }
+
+        function buildRow(item, isDone = false) {
+            const statusText = getStatusText(item);
+            const statusClass = getStatusClass(statusText);
+            const modelNo = getValue(item, ['Model No', 'ModelNo']) || '-';
+            const planId = getValue(item, ['แผนผลิตประจำเดือน ID']) || '-';
+            const description = getValue(item, ['Description']) || '-';
+            const prodQty = getValue(item, ['จำนวนที่ต้องขึ้นผลิต']) || '-';
+            const wo = getValue(item, ['รายการผลิต ID']) || '-';
+            const nav = getValue(item, ['NAV No']) || '-';
+            const rmNo = getValue(item, ['RM No']) || '-';
+            const rmDesc = getValue(item, ['Description RM']) || '-';
+            const issueDate = getValue(item, ['Remark_05']) || '-';
+            const note = getValue(item, ['Remark_07']) || '-';
+            const qty = getValue(item, ['QTY']) || '0';
+            const invNo = getValue(item, ['INV', 'Inv', 'inv']) || '-';
+
+            return `
+                <tr class="transition-colors">
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="date-box">
+                                <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">กำหนดใช้</div>
+                                <div class="text-sm font-bold">${formatDate(item['วันที่กำหนดใช้ของ'])}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col">
+                            <span class="model-text">${modelNo}</span>
+                            <span class="plan-name font-medium">${planId}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${description}</span>
+                            <span class="text-[10px] text-slate-400 mt-1">จำนวนที่ต้องขึ้นผลิต: ${prodQty}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col gap-1">
+                            <span class="wo-badge w-fit">${wo}</span>
+                            <div class="flex items-center gap-1 text-[10px] text-slate-400 ml-1">
+                                <i data-lucide="tag" class="w-3 h-3"></i>
+                                <span>NAV: ${nav}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col">
+                            <span class="rm-text">${rmNo}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${rmDesc}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="qty-circle">${qty}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="status-pill ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        ${
+                            isDone
+                                ? `
+                                <div class="flex justify-center">
+                                    <div class="date-box date-box-green">
+                                        <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">เบิกจริง</div>
+                                        <div class="text-sm font-bold">${formatDate(issueDate)}</div>
+                                    </div>
+                                </div>
+                                `
+                                : `<span class="text-slate-300">-</span>`
+                        }
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        ${
+                            isDone
+                                ? `<span class="inv-badge">${invNo}</span>`
+                                : `<span class="text-slate-300">-</span>`
+                        }
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="remark-box">${note}</div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderSection(tableId, bodyId, emptyId, rows, isDone) {
+            const table = document.getElementById(tableId);
+            const body = document.getElementById(bodyId);
+            const empty = document.getElementById(emptyId);
+
+            body.innerHTML = '';
+
+            if (!rows.length) {
+                table.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            rows.forEach(item => {
+                body.insertAdjacentHTML('beforeend', buildRow(item, isDone));
+            });
+
+            table.style.display = 'table';
+            empty.style.display = 'none';
+        }
+
+        function renderTable(data) {
+            const cleanedData = (data || []).filter(isMeaningfulRow);
+
+            if (!cleanedData.length) {
+                document.getElementById('summaryArea').style.display = 'none';
+                renderSection('pendingTable', 'pendingTableBody', 'pendingEmpty', [], false);
+                renderSection('completeTable', 'completeTableBody', 'completeEmpty', [], true);
+                return;
+            }
+
+            document.getElementById('summaryArea').style.display = 'grid';
+
+            const pendingRows = sortPendingRows(cleanedData.filter(isPending));
+            const completeRows = sortCompletedRows(cleanedData.filter(isCompletedWithin15Days));
+            const visibleRows = [...pendingRows, ...completeRows];
+
+            const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr['QTY']) || 0), 0);
+            const models = [...new Set(visibleRows.map(d => getValue(d, ['Model No', 'ModelNo'])).filter(Boolean))].length;
+            const rms = [...new Set(visibleRows.map(d => getValue(d, ['RM No'])).filter(Boolean))].length;
+
+            document.getElementById('sumQty').innerText = totalQty.toLocaleString();
+            document.getElementById('sumModels').innerText = models + ' รุ่น';
+            document.getElementById('sumRows').innerText = visibleRows.length.toLocaleString();
+            document.getElementById('sumRm').innerText = rms.toLocaleString();
+            document.getElementById('sumPending').innerText = pendingRows.length.toLocaleString();
+            document.getElementById('sumComplete').innerText = completeRows.length.toLocaleString();
+
+            document.getElementById('pendingCountText').textContent = `${pendingRows.length.toLocaleString()} รายการ`;
+            document.getElementById('completeCountText').textContent = `${completeRows.length.toLocaleString()} รายการ`;
+
+            renderSection('pendingTable', 'pendingTableBody', 'pendingEmpty', pendingRows, false);
+            renderSection('completeTable', 'completeTableBody', 'completeEmpty', completeRows, true);
+
+            lucide.createIcons();
+        }
+
+        async function loadData(forceRender = false) {
+            if (isLoading) return;
+            isLoading = true;
+
+            const refreshBtn = document.getElementById('refreshBtn');
+
+            try {
+                setStatus('กำลังโหลดข้อมูล...', 'loader-circle');
+                refreshBtn.disabled = true;
+
+                const response = await fetch(`${WEB_APP_URL}?t=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const payload = await response.json();
+
+                const rows = Array.isArray(payload) ? payload : (Array.isArray(payload.rows) ? payload.rows : []);
+                const newVersion = Array.isArray(payload)
+                    ? JSON.stringify(rows)
+                    : (payload.version || payload.lastUpdated || JSON.stringify(rows));
+
+                document.getElementById('sheetUpdated').textContent =
+                    'ข้อมูลจากชีต: ' + formatDateTime(payload.lastUpdated || new Date().toISOString());
+
+                if (forceRender || currentVersion !== newVersion || currentRows.length === 0) {
+                    currentVersion = newVersion;
+                    currentRows = rows;
+                    renderTable(currentRows);
+
+                    document.getElementById('lastUpdated').textContent =
+                        'อัปเดตล่าสุด: ' + new Date().toLocaleString('th-TH');
+
+                    setStatus(`โหลดข้อมูลสำเร็จ ${rows.length} รายการ`, 'badge-check');
+                } else {
+                    setStatus(`ยังไม่มีการเปลี่ยนแปลงข้อมูล ${currentRows.length} รายการ`, 'clock-3');
+                }
+            } catch (error) {
+                console.error(error);
+
+                if (currentRows.length > 0) {
+                    renderTable(currentRows);
+                    setStatus(`เชื่อมต่อไม่สำเร็จ กำลังแสดงข้อมูลเดิม ${currentRows.length} รายการ`, 'wifi-off');
+                } else {
+                    setStatus('โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบ Web App URL หรือสิทธิ์การเข้าถึง', 'triangle-alert');
+                    renderTable([]);
+                }
+            } finally {
+                refreshBtn.disabled = false;
+                isLoading = false;
+                lucide.createIcons();
+            }
+        }
+
+        loadData(true);
+        setInterval(() => loadData(false), REFRESH_INTERVAL);
+    </script>
 </body>
 </html>

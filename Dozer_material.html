@@ -28,6 +28,17 @@
             font-size: 1.1rem;
             border: 1px solid #c7d2fe;
         }
+        .inv-badge {
+            font-family: monospace;
+            background: #f8fafc;
+            color: #0f172a;
+            padding: 0.45rem 0.9rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            display: inline-block;
+        }
         .model-text {
             color: #1e293b;
             font-weight: 800;
@@ -219,6 +230,7 @@
                             <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
                             <th class="px-6 py-4 font-bold text-center">สถานะ</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
                             <th class="px-6 py-4 font-bold">หมายเหตุ</th>
                         </tr>
                     </thead>
@@ -255,6 +267,7 @@
                             <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
                             <th class="px-6 py-4 font-bold text-center">สถานะ</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
                             <th class="px-6 py-4 font-bold">หมายเหตุ</th>
                         </tr>
                     </thead>
@@ -407,6 +420,7 @@
             const modelNo = getValue(item, ['ModelNo', 'Model No']) || '-';
             const issueDate = getValue(item, ['Remark_05']) || '-';
             const note = getValue(item, ['Remark_07']) || '-';
+            const invNo = getValue(item, ['INV', 'Inv', 'inv']) || '-';
 
             return `
                 <tr class="transition-colors">
@@ -453,6 +467,13 @@
                                     </div>
                                 </div>
                                 `
+                                : `<span class="text-slate-300">-</span>`
+                        }
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        ${
+                            isDone
+                                ? `<span class="inv-badge">${invNo}</span>`
                                 : `<span class="text-slate-300">-</span>`
                         }
                     </td>

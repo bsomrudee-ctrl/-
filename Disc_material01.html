@@ -300,7 +300,6 @@
     </style>
 </head>
 <body class="p-4 md:p-8">
-
     <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
             <div>
@@ -308,9 +307,9 @@
                     <span class="bg-indigo-600 text-white p-1 rounded-lg">
                         <i data-lucide="clipboard-list" class="w-5 h-5"></i>
                     </span>
-                    <h1 class="text-2xl font-bold text-slate-800">รายการใบเบิกประจำวัน - ใบผาน</h1>
+                    <h1 class="text-2xl font-bold text-slate-800">รายการใบเบิกประจำวัน</h1>
                 </div>
-                <p class="text-slate-500 text-sm ml-8">เช็ควันที่กำหนดใช้ เลข WO รุ่น และ RM เพื่อการเบิกจ่ายที่แม่นยำ</p>
+                <p class="text-slate-500 text-sm ml-8">เช็ควันที่กำหนดใช้ เลข WO และรุ่น เพื่อการเบิกจ่ายที่แม่นยำ</p>
             </div>
 
             <div class="flex gap-2">
@@ -341,7 +340,7 @@
             <div id="woAlertList" class="wo-alert-list"></div>
         </div>
 
-        <div id="summaryArea" class="hidden grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+        <div id="summaryArea" class="hidden grid grid-cols-2 md:grid-cols-8 gap-4 mb-6">
             <div class="bg-white p-4 rounded-2xl border border-slate-100">
                 <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">จำนวนรุ่น</p>
                 <p id="sumModels" class="text-xl font-bold text-slate-800">-</p>
@@ -366,6 +365,14 @@
                 <p class="text-[10px] uppercase font-bold text-emerald-500 mb-1">เบิกแล้ว (15 วัน)</p>
                 <p id="sumComplete" class="text-xl font-bold text-emerald-600">-</p>
             </div>
+            <div class="bg-white p-4 rounded-2xl border border-rose-100">
+                <p class="text-[10px] uppercase font-bold text-rose-500 mb-1">ยังไม่เปิด WO</p>
+                <p id="sumWOPending" class="text-xl font-bold text-rose-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-emerald-100">
+                <p class="text-[10px] uppercase font-bold text-emerald-500 mb-1">เปิด WO แล้ว</p>
+                <p id="sumWOOpen" class="text-xl font-bold text-emerald-600">-</p>
+            </div>
         </div>
 
         <div class="table-container mb-8">
@@ -389,11 +396,9 @@
                 <table class="w-full text-left" id="pendingTable" style="display:none;">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                            <th class="px-6 py-4 font-bold text-center">เปิด WO</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
-                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (Model & Plan)</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (MODEL & PLAN)</th>
                             <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
-                            <th class="px-6 py-4 font-bold">ข้อมูล RM</th>
                             <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
                             <th class="px-6 py-4 font-bold text-center">สถานะ</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
@@ -429,9 +434,8 @@
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
                             <th class="px-6 py-4 font-bold text-center">เปิด WO</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
-                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (Model & Plan)</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (MODEL & PLAN)</th>
                             <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
-                            <th class="px-6 py-4 font-bold">ข้อมูล RM</th>
                             <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
                             <th class="px-6 py-4 font-bold text-center">สถานะ</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
@@ -445,14 +449,14 @@
         </div>
 
         <footer class="mt-6 text-center text-slate-400 text-xs">
-            ออกแบบเพื่อฝ่ายผลิตและสโตร์ - Dashboard รายการเบิกใบผาน
+            ออกแบบเพื่อฝ่ายผลิตและสโตร์ - Dozer Production Dashboard
         </footer>
     </div>
 
     <script>
         lucide.createIcons();
 
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCi9Bz5b0l3uWwBWhKfyuLTuyKV3MeTSSIMvj8Z98hqbgl3yGUo7fsR8zyxaAmboI/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcZD9-UF6cqhN0OhBoyXyk8XzKqwhFutj6Hu6TuBFgk3PsHsSr69uTzGmTz0LMsDJl/exec";
         const REFRESH_INTERVAL = 10000;
         const COMPLETED_LOOKBACK_DAYS = 15;
 
@@ -530,6 +534,15 @@
             return '';
         }
 
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function parseNumber(value) {
             if (value === null || value === undefined) return null;
             const cleaned = String(value).replace(/,/g, '').trim();
@@ -582,31 +595,6 @@
             return map;
         }
 
-        function getStoreIssueQtyInfo(item) {
-            const rawValue = getValue(item, ['จำนวนสโตร์จ่าย', 'Store Issue Qty', 'Store Qty', 'จำนวนจ่าย', 'Remark_09']);
-            const qtyValue = parseNumber(getValue(item, ['QTY']));
-            const storeQty = parseNumber(rawValue);
-
-            if (storeQty === null) {
-                return {
-                    display: '-',
-                    className: 'store-qty-missing'
-                };
-            }
-
-            if (qtyValue === null) {
-                return {
-                    display: storeQty.toLocaleString(),
-                    className: 'store-qty-match'
-                };
-            }
-
-            return {
-                display: storeQty.toLocaleString(),
-                className: storeQty === qtyValue ? 'store-qty-match' : 'store-qty-mismatch'
-            };
-        }
-
         function getInvInfo(item) {
             const rawInv = getValue(item, ['INV', 'Inv', 'inv']);
             const invDisplay = rawInv && String(rawInv).trim() !== '' ? String(rawInv).trim() : '-';
@@ -630,39 +618,15 @@
         }
 
         function isMeaningfulRow(item) {
-            const dueDate = getValue(item, ['วันที่กำหนดใช้ของ']);
-            const modelNo = getValue(item, ['Model No', 'ModelNo']);
-            const planId = getValue(item, ['แผนผลิตประจำเดือน ID']);
             const wo = getValue(item, ['รายการผลิต ID']);
-            const nav = getValue(item, ['NAV No']);
-            const rmNo = getValue(item, ['RM No']);
-            const rmDesc = getValue(item, ['Description RM']);
-            const desc = getValue(item, ['Description']);
-            const prodQty = getValue(item, ['จำนวนที่ต้องขึ้นผลิต']);
+            const model = getValue(item, ['ModelNo', 'Model No']);
+            const plan = getValue(item, ['แผนผลิตประจำเดือน ID']);
             const qty = parseInt(getValue(item, ['QTY']) || '0', 10) || 0;
-            const storeIssueQty = getValue(item, ['จำนวนสโตร์จ่าย', 'Store Issue Qty', 'Store Qty', 'จำนวนจ่าย', 'Remark_09']);
-            const issueDate = getValue(item, ['Remark_05']);
-            const note = getValue(item, ['Remark_07']);
+            const dueDate = getValue(item, ['วันที่กำหนดใช้ของ']);
             const inv = getValue(item, ['INV', 'Inv', 'inv']);
             const openWo = getValue(item, ['เปิด WO', 'Open WO', 'สถานะเปิด WO', 'WO Status', 'Remark_06', 'Remark_08']);
 
-            return !!(
-                dueDate ||
-                modelNo ||
-                planId ||
-                wo ||
-                nav ||
-                rmNo ||
-                rmDesc ||
-                desc ||
-                prodQty ||
-                issueDate ||
-                note ||
-                inv ||
-                openWo ||
-                storeIssueQty ||
-                qty > 0
-            );
+            return !!(wo || model || plan || dueDate || inv || openWo || qty > 0);
         }
 
         function getStatusText(item) {
@@ -773,6 +737,12 @@
             };
         }
 
+        function getWOCountStatus(item) {
+            const info = getWoOpenInfo(item);
+            if (!info.raw || info.pillText === 'ยังไม่เปิด') return 'pending';
+            return info.isComplete ? 'open' : 'pending';
+        }
+
         function isPending(item) {
             return getStatusText(item) === 'รอเบิก';
         }
@@ -813,25 +783,68 @@
             });
         }
 
-        function buildRow(item, isDone = false) {
+        function buildPendingRow(item) {
             const statusText = getStatusText(item);
             const statusClass = getStatusClass(statusText);
-            const woOpen = getWoOpenInfo(item);
-            const storeIssueQty = getStoreIssueQtyInfo(item);
-            const invInfo = getInvInfo(item);
+            const modelNo = getValue(item, ['ModelNo', 'Model No']) || '-';
+            const note = getValue(item, ['Remark_07']) || '-';
 
-            const nav = getValue(item, ['NAV No']) || '-';
-            const modelNo = nav;
-            const planId = getValue(item, ['แผนผลิตประจำเดือน ID']) || '-';
-            const description = getValue(item, ['Description']) || '-';
-            const prodQty = getValue(item, ['จำนวนที่ต้องขึ้นผลิต']) || '-';
-            const wo = getValue(item, ['รายการผลิต ID']) || '-';
-            const rmNo = getValue(item, ['RM No']) || '-';
-            const rmDescRaw = getValue(item, ['Description RM']) || '-';
-            const rmDesc = rmDescRaw === '-' ? '-' : String(rmDescRaw).substring(0, 5);
+            return `
+                <tr class="transition-colors">
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="date-box">
+                                <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">กำหนดใช้</div>
+                                <div class="text-sm font-bold">${formatDate(item['วันที่กำหนดใช้ของ'])}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col">
+                            <span class="model-text">${escapeHtml(modelNo)}</span>
+                            <span class="plan-name font-medium">${escapeHtml(item['แผนผลิตประจำเดือน ID'] || '-')}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${escapeHtml(item.Description || '-')}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col gap-1">
+                            <span class="wo-badge w-fit">${escapeHtml(item['รายการผลิต ID'] || '-')}</span>
+                            <div class="flex items-center gap-1 text-[10px] text-slate-400 ml-1">
+                                <i data-lucide="tag" class="w-3 h-3"></i>
+                                <span>NAV: ${escapeHtml(item['NAV No'] || '-')}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="qty-circle">${escapeHtml(item.QTY || '0')}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="status-pill ${statusClass}">${escapeHtml(statusText)}</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="text-slate-300">-</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="text-slate-300">-</span>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="remark-box">${escapeHtml(note)}</div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function buildCompleteRow(item) {
+            const statusText = getStatusText(item);
+            const statusClass = getStatusClass(statusText);
+            const modelNo = getValue(item, ['ModelNo', 'Model No']) || '-';
             const issueDate = getValue(item, ['Remark_05']) || '-';
             const note = getValue(item, ['Remark_07']) || '-';
             const qty = getValue(item, ['QTY']) || '0';
+            const invInfo = getInvInfo(item);
+            const woOpen = getWoOpenInfo(item);
 
             return `
                 <tr class="transition-colors">
@@ -845,10 +858,10 @@
                                             ? `<div class="wo-open-main">${woOpen.mainText}</div>`
                                             : ``
                                     }
-                                    <div class="wo-open-sub">${woOpen.subText}</div>
+                                    <div class="wo-open-sub">${escapeHtml(woOpen.subText)}</div>
                                     ${
                                         woOpen.ratioText
-                                            ? `<div class="wo-open-count"><i data-lucide="package-check" class="w-3 h-3"></i><span>${woOpen.ratioText}</span></div>`
+                                            ? `<div class="wo-open-count"><i data-lucide="package-check" class="w-3 h-3"></i><span>${escapeHtml(woOpen.ratioText)}</span></div>`
                                             : ``
                                     }
                                 </div>
@@ -865,63 +878,43 @@
                     </td>
                     <td class="px-6 py-6">
                         <div class="flex flex-col">
-                            <span class="model-text">${modelNo}</span>
-                            <span class="plan-name font-medium">${planId}</span>
-                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${description}</span>
-                            <span class="text-[10px] text-slate-400 mt-1">จำนวนที่ต้องขึ้นผลิต: ${prodQty}</span>
+                            <span class="model-text">${escapeHtml(modelNo)}</span>
+                            <span class="plan-name font-medium">${escapeHtml(item['แผนผลิตประจำเดือน ID'] || '-')}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${escapeHtml(item.Description || '-')}</span>
                         </div>
                     </td>
                     <td class="px-6 py-6">
                         <div class="flex flex-col gap-1">
-                            <span class="wo-badge w-fit">${wo}</span>
+                            <span class="wo-badge w-fit">${escapeHtml(item['รายการผลิต ID'] || '-')}</span>
                             <div class="flex items-center gap-1 text-[10px] text-slate-400 ml-1">
                                 <i data-lucide="tag" class="w-3 h-3"></i>
-                                <span>NAV: ${nav}</span>
+                                <span>NAV: ${escapeHtml(item['NAV No'] || '-')}</span>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-6">
-                        <div class="flex flex-col">
-                            <span class="rm-text">${rmNo}</span>
-                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${rmDesc}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-6">
-                        <div class="qty-wrap">
-                            <div class="qty-circle">${qty}</div>
-                            ${
-                                isDone
-                                    ? `<div class="store-qty-circle ${storeIssueQty.className}">${storeIssueQty.display}</div>`
-                                    : ``
-                            }
+                        <div class="flex justify-center">
+                            <div class="qty-circle">${escapeHtml(qty)}</div>
                         </div>
                     </td>
                     <td class="px-6 py-6 text-center">
-                        <span class="status-pill ${statusClass}">${statusText}</span>
+                        <span class="status-pill ${statusClass}">${escapeHtml(statusText)}</span>
                     </td>
                     <td class="px-6 py-6 text-center">
-                        ${
-                            isDone
-                                ? `
-                                <div class="flex justify-center">
-                                    <div class="date-box date-box-green">
-                                        <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">เบิกจริง</div>
-                                        <div class="text-sm font-bold">${formatDate(issueDate)}</div>
-                                    </div>
-                                </div>
-                                `
-                                : `<span class="text-slate-300">-</span>`
-                        }
+                        <div class="flex justify-center">
+                            <div class="date-box date-box-green">
+                                <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">เบิกจริง</div>
+                                <div class="text-sm font-bold">${formatDate(issueDate)}</div>
+                            </div>
+                        </div>
                     </td>
                     <td class="px-6 py-6 text-center">
-                        ${
-                            isDone
-                                ? `<span class="inv-badge ${invInfo.className}" style="${invInfo.style || ''}">${invInfo.display}</span>`
-                                : `<span class="text-slate-300">-</span>`
-                        }
+                        <span class="inv-badge ${invInfo.className}" style="${invInfo.style || ''}">
+                            ${escapeHtml(invInfo.display)}
+                        </span>
                     </td>
                     <td class="px-6 py-6">
-                        <div class="remark-box">${note}</div>
+                        <div class="remark-box">${escapeHtml(note)}</div>
                     </td>
                 </tr>
             `;
@@ -941,7 +934,8 @@
             }
 
             rows.forEach(item => {
-                body.insertAdjacentHTML('beforeend', buildRow(item, isDone));
+                const rowHtml = isDone ? buildCompleteRow(item) : buildPendingRow(item);
+                body.insertAdjacentHTML('beforeend', rowHtml);
             });
 
             table.style.display = 'table';
@@ -981,9 +975,9 @@
 
                 list.insertAdjacentHTML('beforeend', `
                     <div class="wo-alert-item ${extraClass}">
-                        <span>WO: ${wo}</span>
+                        <span>WO: ${escapeHtml(wo)}</span>
                         <span>-</span>
-                        <span>${woOpen.raw}</span>
+                        <span>${escapeHtml(woOpen.raw)}</span>
                     </div>
                 `);
             });
@@ -992,8 +986,8 @@
             lucide.createIcons();
         }
 
-        function renderTable(data) {
-            const cleanedData = (data || []).filter(isMeaningfulRow);
+        function renderTable(rawData) {
+            const cleanedData = rawData.filter(isMeaningfulRow);
 
             if (!cleanedData.length) {
                 document.getElementById('summaryArea').style.display = 'none';
@@ -1011,16 +1005,19 @@
 
             invColorMap = buildInvColorMap(completeRows);
 
-            const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr['QTY']) || 0), 0);
-            const models = [...new Set(visibleRows.map(d => getValue(d, ['NAV No'])).filter(Boolean))].length;
-            const rms = [...new Set(visibleRows.map(d => getValue(d, ['RM No'])).filter(Boolean))].length;
+            const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr.QTY) || 0), 0);
+            const models = [...new Set(visibleRows.map(d => getValue(d, ['ModelNo', 'Model No'])).filter(Boolean))].length;
+            const woOpenCount = completeRows.filter(item => getWOCountStatus(item) === 'open').length;
+            const woPendingCount = completeRows.filter(item => getWOCountStatus(item) === 'pending').length;
 
             document.getElementById('sumQty').innerText = totalQty.toLocaleString();
             document.getElementById('sumModels').innerText = models + ' รุ่น';
             document.getElementById('sumRows').innerText = visibleRows.length.toLocaleString();
-            document.getElementById('sumRm').innerText = rms.toLocaleString();
+            document.getElementById('sumRm').innerText = '-';
             document.getElementById('sumPending').innerText = pendingRows.length.toLocaleString();
             document.getElementById('sumComplete').innerText = completeRows.length.toLocaleString();
+            document.getElementById('sumWOPending').innerText = woPendingCount.toLocaleString();
+            document.getElementById('sumWOOpen').innerText = woOpenCount.toLocaleString();
 
             document.getElementById('pendingCountText').textContent = `${pendingRows.length.toLocaleString()} รายการ`;
             document.getElementById('completeCountText').textContent = `${completeRows.length.toLocaleString()} รายการ`;
@@ -1039,18 +1036,15 @@
             const refreshBtn = document.getElementById('refreshBtn');
 
             try {
-                setStatus('กำลังโหลดข้อมูล...', 'loader-circle');
+                setStatus('กำลังตรวจสอบข้อมูลล่าสุด...', 'loader-circle');
                 refreshBtn.disabled = true;
 
                 const response = await fetch(`${WEB_APP_URL}?t=${Date.now()}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                 const payload = await response.json();
-
-                const rows = Array.isArray(payload) ? payload : (Array.isArray(payload.rows) ? payload.rows : []);
-                const newVersion = Array.isArray(payload)
-                    ? JSON.stringify(rows)
-                    : (payload.version || payload.lastUpdated || JSON.stringify(rows));
+                const rows = Array.isArray(payload.rows) ? payload.rows : [];
+                const newVersion = payload.version || payload.lastUpdated || JSON.stringify(rows);
 
                 document.getElementById('sheetUpdated').textContent =
                     'ข้อมูลจากชีต: ' + formatDateTime(payload.lastUpdated || new Date().toISOString());
@@ -1065,7 +1059,7 @@
 
                     setStatus(`โหลดข้อมูลสำเร็จ ${rows.length} รายการ`, 'badge-check');
                 } else {
-                    setStatus(`ยังไม่มีการเปลี่ยนแปลงข้อมูล ${currentRows.length} รายการ`, 'clock-3');
+                    setStatus('ยังไม่มีการเปลี่ยนแปลงข้อมูล', 'clock-3');
                 }
             } catch (error) {
                 console.error(error);

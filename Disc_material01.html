@@ -30,14 +30,18 @@
         }
         .inv-badge {
             font-family: monospace;
-            background: #f8fafc;
-            color: #0f172a;
             padding: 0.45rem 0.9rem;
             border-radius: 0.75rem;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1rem;
-            border: 1px solid #e2e8f0;
             display: inline-block;
+            border: 2px solid transparent;
+            min-width: 86px;
+        }
+        .inv-badge-missing {
+            background: #f8fafc;
+            color: #64748b;
+            border-color: #cbd5e1;
         }
         .model-text {
             color: #1e293b;
@@ -455,6 +459,7 @@
         let currentVersion = null;
         let currentRows = [];
         let isLoading = false;
+        let invColorMap = {};
 
         document.getElementById('refreshBtn').addEventListener('click', () => loadData(true));
 
@@ -533,6 +538,50 @@
             return Number.isFinite(num) ? num : null;
         }
 
+        function normalizeInvKey(value) {
+            return String(value || '').trim();
+        }
+
+        function generatePastelColorByIndex(index) {
+            const palette = [
+                { background: '#FDE68A', border: '#F59E0B', text: '#92400E' },
+                { background: '#BFDBFE', border: '#3B82F6', text: '#1D4ED8' },
+                { background: '#C7F9CC', border: '#22C55E', text: '#166534' },
+                { background: '#FBCFE8', border: '#EC4899', text: '#9D174D' },
+                { background: '#DDD6FE', border: '#8B5CF6', text: '#5B21B6' },
+                { background: '#A7F3D0', border: '#10B981', text: '#065F46' },
+                { background: '#FED7AA', border: '#F97316', text: '#9A3412' },
+                { background: '#FECDD3', border: '#F43F5E', text: '#9F1239' },
+                { background: '#BAE6FD', border: '#0EA5E9', text: '#075985' },
+                { background: '#E9D5FF', border: '#A855F7', text: '#6B21A8' },
+                { background: '#D9F99D', border: '#84CC16', text: '#3F6212' },
+                { background: '#F5D0FE', border: '#D946EF', text: '#86198F' }
+            ];
+
+            return palette[index % palette.length];
+        }
+
+        function buildInvColorMap(rows) {
+            const map = {};
+            const uniqueInvs = [];
+
+            rows.forEach(item => {
+                const rawInv = getValue(item, ['INV', 'Inv', 'inv']);
+                const key = normalizeInvKey(rawInv);
+                if (key && !uniqueInvs.includes(key)) {
+                    uniqueInvs.push(key);
+                }
+            });
+
+            uniqueInvs.sort();
+
+            uniqueInvs.forEach((key, index) => {
+                map[key] = generatePastelColorByIndex(index);
+            });
+
+            return map;
+        }
+
         function getStoreIssueQtyInfo(item) {
             const rawValue = getValue(item, ['จำนวนสโตร์จ่าย', 'Store Issue Qty', 'Store Qty', 'จำนวนจ่าย', 'Remark_09']);
             const qtyValue = parseNumber(getValue(item, ['QTY']));
@@ -555,6 +604,28 @@
             return {
                 display: storeQty.toLocaleString(),
                 className: storeQty === qtyValue ? 'store-qty-match' : 'store-qty-mismatch'
+            };
+        }
+
+        function getInvInfo(item) {
+            const rawInv = getValue(item, ['INV', 'Inv', 'inv']);
+            const invDisplay = rawInv && String(rawInv).trim() !== '' ? String(rawInv).trim() : '-';
+            const key = normalizeInvKey(invDisplay);
+
+            if (invDisplay === '-' || !key) {
+                return {
+                    display: '-',
+                    className: 'inv-badge-missing',
+                    style: ''
+                };
+            }
+
+            const color = invColorMap[key] || generatePastelColorByIndex(0);
+
+            return {
+                display: invDisplay,
+                className: '',
+                style: `background:${color.background}; color:${color.text}; border-color:${color.border};`
             };
         }
 
@@ -747,6 +818,7 @@
             const statusClass = getStatusClass(statusText);
             const woOpen = getWoOpenInfo(item);
             const storeIssueQty = getStoreIssueQtyInfo(item);
+            const invInfo = getInvInfo(item);
 
             const nav = getValue(item, ['NAV No']) || '-';
             const modelNo = nav;
@@ -760,7 +832,6 @@
             const issueDate = getValue(item, ['Remark_05']) || '-';
             const note = getValue(item, ['Remark_07']) || '-';
             const qty = getValue(item, ['QTY']) || '0';
-            const invNo = getValue(item, ['INV', 'Inv', 'inv']) || '-';
 
             return `
                 <tr class="transition-colors">
@@ -845,7 +916,7 @@
                     <td class="px-6 py-6 text-center">
                         ${
                             isDone
-                                ? `<span class="inv-badge">${invNo}</span>`
+                                ? `<span class="inv-badge ${invInfo.className}" style="${invInfo.style || ''}">${invInfo.display}</span>`
                                 : `<span class="text-slate-300">-</span>`
                         }
                     </td>
@@ -937,6 +1008,8 @@
             const pendingRows = sortPendingRows(cleanedData.filter(isPending));
             const completeRows = sortCompletedRows(cleanedData.filter(isCompletedWithin15Days));
             const visibleRows = [...pendingRows, ...completeRows];
+
+            invColorMap = buildInvColorMap(completeRows);
 
             const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr['QTY']) || 0), 0);
             const models = [...new Set(visibleRows.map(d => getValue(d, ['NAV No'])).filter(Boolean))].length;

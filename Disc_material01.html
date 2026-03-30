@@ -53,6 +53,12 @@
             font-size: 0.8rem;
             font-weight: 600;
         }
+        .qty-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
         .qty-circle {
             background: #f8fafc;
             border: 2px solid #e2e8f0;
@@ -64,6 +70,36 @@
             border-radius: 50%;
             font-weight: 700;
             color: #0f172a;
+            flex-shrink: 0;
+        }
+        .store-qty-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            color: #0f172a;
+            flex-shrink: 0;
+        }
+        .store-qty-match {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+            color: #047857;
+        }
+        .store-qty-mismatch {
+            background: #fff7ed;
+            border-color: #fdba74;
+            color: #c2410c;
+        }
+        .store-qty-missing {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
         }
         .date-box {
             background: #fff7ed;
@@ -166,6 +202,10 @@
             background: #fef2f2;
             border-color: #fecaca;
         }
+        .wo-open-box-over {
+            background: #fff1f2;
+            border-color: #fda4af;
+        }
         .wo-open-pill {
             display: inline-flex;
             align-items: center;
@@ -185,6 +225,11 @@
             background: #fee2e2;
             color: #b91c1c;
             border: 1px solid #fca5a5;
+        }
+        .wo-open-over {
+            background: #ffe4e6;
+            color: #be123c;
+            border: 1px solid #fb7185;
         }
         .wo-open-main {
             font-size: 0.82rem;
@@ -221,6 +266,10 @@
             margin-bottom: 1.25rem;
             display: none;
         }
+        .wo-alert-wrap-over {
+            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%);
+            border-color: #fda4af;
+        }
         .wo-alert-item {
             display: inline-flex;
             align-items: center;
@@ -232,6 +281,11 @@
             padding: 0.5rem 0.8rem;
             font-size: 0.8rem;
             font-weight: 700;
+        }
+        .wo-alert-item-over {
+            border-color: #fda4af;
+            color: #be123c;
+            background: #fff7f8;
         }
         .wo-alert-list {
             display: flex;
@@ -279,7 +333,7 @@
                 <i data-lucide="triangle-alert" class="w-5 h-5"></i>
                 <span>แจ้งเตือนการเปิด WO ของรายการที่เบิกแล้ว</span>
             </div>
-            <p class="text-sm text-red-600 mt-1">รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด</p>
+            <p id="woAlertDesc" class="text-sm text-red-600 mt-1">รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด</p>
             <div id="woAlertList" class="wo-alert-list"></div>
         </div>
 
@@ -310,7 +364,6 @@
             </div>
         </div>
 
-        <!-- SECTION 1 : รอเบิก -->
         <div class="table-container mb-8">
             <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3 section-header-pending">
                 <div class="flex items-center gap-3">
@@ -349,7 +402,6 @@
             </div>
         </div>
 
-        <!-- SECTION 2 : เบิกแล้ว -->
         <div class="table-container">
             <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3 section-header-complete">
                 <div class="flex items-center gap-3">
@@ -473,6 +525,39 @@
             return '';
         }
 
+        function parseNumber(value) {
+            if (value === null || value === undefined) return null;
+            const cleaned = String(value).replace(/,/g, '').trim();
+            if (!cleaned) return null;
+            const num = Number(cleaned);
+            return Number.isFinite(num) ? num : null;
+        }
+
+        function getStoreIssueQtyInfo(item) {
+            const rawValue = getValue(item, ['จำนวนสโตร์จ่าย', 'Store Issue Qty', 'Store Qty', 'จำนวนจ่าย', 'Remark_09']);
+            const qtyValue = parseNumber(getValue(item, ['QTY']));
+            const storeQty = parseNumber(rawValue);
+
+            if (storeQty === null) {
+                return {
+                    display: '-',
+                    className: 'store-qty-missing'
+                };
+            }
+
+            if (qtyValue === null) {
+                return {
+                    display: storeQty.toLocaleString(),
+                    className: 'store-qty-match'
+                };
+            }
+
+            return {
+                display: storeQty.toLocaleString(),
+                className: storeQty === qtyValue ? 'store-qty-match' : 'store-qty-mismatch'
+            };
+        }
+
         function isMeaningfulRow(item) {
             const dueDate = getValue(item, ['วันที่กำหนดใช้ของ']);
             const modelNo = getValue(item, ['Model No', 'ModelNo']);
@@ -484,6 +569,7 @@
             const desc = getValue(item, ['Description']);
             const prodQty = getValue(item, ['จำนวนที่ต้องขึ้นผลิต']);
             const qty = parseInt(getValue(item, ['QTY']) || '0', 10) || 0;
+            const storeIssueQty = getValue(item, ['จำนวนสโตร์จ่าย', 'Store Issue Qty', 'Store Qty', 'จำนวนจ่าย', 'Remark_09']);
             const issueDate = getValue(item, ['Remark_05']);
             const note = getValue(item, ['Remark_07']);
             const inv = getValue(item, ['INV', 'Inv', 'inv']);
@@ -503,6 +589,7 @@
                 note ||
                 inv ||
                 openWo ||
+                storeIssueQty ||
                 qty > 0
             );
         }
@@ -544,13 +631,14 @@
             if (!rawValue) {
                 return {
                     raw: 'ยังไม่เปิด WO',
-                    mainText: 'ยังไม่เปิด WO',
+                    mainText: '',
                     subText: 'ไม่มีข้อมูลการเปิด WO',
                     ratioText: '',
                     className: 'wo-open-box-red',
                     pillClass: 'wo-open-red',
                     pillText: 'ยังไม่เปิด',
-                    isComplete: false
+                    isComplete: false,
+                    isOver: false
                 };
             }
 
@@ -559,10 +647,13 @@
             const openedQty = ratioMatch ? parseInt(ratioMatch[1], 10) : null;
             const totalQty = ratioMatch ? parseInt(ratioMatch[2], 10) : null;
             const hasRatio = Number.isFinite(openedQty) && Number.isFinite(totalQty);
+            const isOver = hasRatio && openedQty > totalQty;
 
             let isComplete = false;
 
-            if (text.includes('ยังไม่ครบ')) {
+            if (isOver) {
+                isComplete = false;
+            } else if (text.includes('ยังไม่ครบ')) {
                 isComplete = false;
             } else if (text.includes('ยังไม่เปิด')) {
                 isComplete = false;
@@ -575,12 +666,24 @@
             }
 
             let pillText = isComplete ? 'เปิดครบ' : 'ยังไม่ครบ';
+            let pillClass = isComplete ? 'wo-open-green' : 'wo-open-red';
+            let className = isComplete ? 'wo-open-box-green' : 'wo-open-box-red';
+
             if (text.includes('ยังไม่เปิด')) {
                 pillText = 'ยังไม่เปิด';
             }
 
+            if (isOver) {
+                pillText = 'เปิดเกิน';
+                pillClass = 'wo-open-over';
+                className = 'wo-open-box-over';
+            }
+
             let subText = rawValue;
-            if (text.includes('เปิด wo แล้ว')) {
+
+            if (isOver) {
+                subText = 'จำนวนที่เปิด WO มากกว่าจำนวนที่กำหนด';
+            } else if (text.includes('เปิด wo แล้ว')) {
                 subText = 'มีข้อมูลการเปิด WO แล้ว';
             } else if (text.includes('ยังไม่เปิด')) {
                 subText = 'ยังไม่มีการเปิด WO';
@@ -588,13 +691,14 @@
 
             return {
                 raw: rawValue,
-                mainText: rawValue,
+                mainText: '',
                 subText: subText,
                 ratioText: hasRatio ? `${openedQty}/${totalQty}` : '',
-                className: isComplete ? 'wo-open-box-green' : 'wo-open-box-red',
-                pillClass: isComplete ? 'wo-open-green' : 'wo-open-red',
+                className: className,
+                pillClass: pillClass,
                 pillText: pillText,
-                isComplete: isComplete
+                isComplete: isComplete,
+                isOver: isOver
             };
         }
 
@@ -642,6 +746,7 @@
             const statusText = getStatusText(item);
             const statusClass = getStatusClass(statusText);
             const woOpen = getWoOpenInfo(item);
+            const storeIssueQty = getStoreIssueQtyInfo(item);
 
             const nav = getValue(item, ['NAV No']) || '-';
             const modelNo = nav;
@@ -664,7 +769,11 @@
                             <div class="wo-open-box ${woOpen.className}">
                                 <div class="flex flex-col">
                                     <span class="wo-open-pill ${woOpen.pillClass}">${woOpen.pillText}</span>
-                                    <div class="wo-open-main">${woOpen.mainText}</div>
+                                    ${
+                                        woOpen.mainText
+                                            ? `<div class="wo-open-main">${woOpen.mainText}</div>`
+                                            : ``
+                                    }
                                     <div class="wo-open-sub">${woOpen.subText}</div>
                                     ${
                                         woOpen.ratioText
@@ -707,8 +816,13 @@
                         </div>
                     </td>
                     <td class="px-6 py-6">
-                        <div class="flex justify-center">
+                        <div class="qty-wrap">
                             <div class="qty-circle">${qty}</div>
+                            ${
+                                isDone
+                                    ? `<div class="store-qty-circle ${storeIssueQty.className}">${storeIssueQty.display}</div>`
+                                    : ``
+                            }
                         </div>
                     </td>
                     <td class="px-6 py-6 text-center">
@@ -766,6 +880,7 @@
         function renderWoAlert(rows) {
             const wrap = document.getElementById('woAlertWrap');
             const list = document.getElementById('woAlertList');
+            const desc = document.getElementById('woAlertDesc');
 
             list.innerHTML = '';
 
@@ -773,18 +888,31 @@
 
             if (!alertRows.length) {
                 wrap.style.display = 'none';
+                wrap.classList.remove('wo-alert-wrap-over');
+                desc.textContent = 'รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด';
                 return;
+            }
+
+            const hasOver = alertRows.some(item => getWoOpenInfo(item).isOver);
+
+            if (hasOver) {
+                wrap.classList.add('wo-alert-wrap-over');
+                desc.textContent = 'รายการด้านล่างมี WO ที่เปิดไม่ครบ ยังไม่เปิด หรือเปิดเกินจำนวน';
+            } else {
+                wrap.classList.remove('wo-alert-wrap-over');
+                desc.textContent = 'รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด';
             }
 
             alertRows.forEach(item => {
                 const wo = getValue(item, ['รายการผลิต ID']) || '-';
                 const woOpen = getWoOpenInfo(item);
+                const extraClass = woOpen.isOver ? 'wo-alert-item-over' : '';
 
                 list.insertAdjacentHTML('beforeend', `
-                    <div class="wo-alert-item">
+                    <div class="wo-alert-item ${extraClass}">
                         <span>WO: ${wo}</span>
                         <span>-</span>
-                        <span>${woOpen.mainText}</span>
+                        <span>${woOpen.raw}</span>
                     </div>
                 `);
             });

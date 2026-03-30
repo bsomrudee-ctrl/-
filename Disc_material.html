@@ -150,6 +150,95 @@
             text-align: center;
             color: #94a3b8;
         }
+        .wo-open-box {
+            min-width: 210px;
+            max-width: 270px;
+            border-radius: 1rem;
+            padding: 0.8rem 0.9rem;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .wo-open-box-green {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+        }
+        .wo-open-box-red {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+        .wo-open-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-bottom: 0.45rem;
+        }
+        .wo-open-green {
+            background: #dcfce7;
+            color: #047857;
+            border: 1px solid #86efac;
+        }
+        .wo-open-red {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+        .wo-open-main {
+            font-size: 0.82rem;
+            font-weight: 700;
+            line-height: 1.35rem;
+            color: #0f172a;
+            word-break: break-word;
+        }
+        .wo-open-sub {
+            font-size: 0.72rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+            word-break: break-word;
+        }
+        .wo-open-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-family: monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-top: 0.45rem;
+            padding: 0.22rem 0.5rem;
+            border-radius: 0.6rem;
+            background: rgba(255,255,255,0.75);
+            border: 1px solid rgba(148,163,184,0.25);
+            color: #0f172a;
+        }
+        .wo-alert-wrap {
+            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+            border: 1px solid #fecaca;
+            border-radius: 1.25rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+        .wo-alert-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ffffff;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            border-radius: 999px;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .wo-alert-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.85rem;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -183,6 +272,15 @@
                 <div id="lastUpdated" class="text-slate-400 text-xs">อัปเดตล่าสุด: -</div>
                 <div id="sheetUpdated" class="text-slate-400 text-xs">ข้อมูลจากชีต: -</div>
             </div>
+        </div>
+
+        <div id="woAlertWrap" class="wo-alert-wrap">
+            <div class="flex items-center gap-2 text-red-700 font-bold">
+                <i data-lucide="triangle-alert" class="w-5 h-5"></i>
+                <span>แจ้งเตือนการเปิด WO ของรายการที่เบิกแล้ว</span>
+            </div>
+            <p class="text-sm text-red-600 mt-1">รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด</p>
+            <div id="woAlertList" class="wo-alert-list"></div>
         </div>
 
         <div id="summaryArea" class="hidden grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
@@ -234,6 +332,7 @@
                 <table class="w-full text-left" id="pendingTable" style="display:none;">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 font-bold text-center">เปิด WO</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
                             <th class="px-6 py-4 font-bold">ข้อมูลแผน (Model & Plan)</th>
                             <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
@@ -272,6 +371,7 @@
                 <table class="w-full text-left" id="completeTable" style="display:none;">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 font-bold text-center">เปิด WO</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
                             <th class="px-6 py-4 font-bold">ข้อมูลแผน (Model & Plan)</th>
                             <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
@@ -387,6 +487,7 @@
             const issueDate = getValue(item, ['Remark_05']);
             const note = getValue(item, ['Remark_07']);
             const inv = getValue(item, ['INV', 'Inv', 'inv']);
+            const openWo = getValue(item, ['เปิด WO', 'Open WO', 'สถานะเปิด WO', 'WO Status', 'Remark_06', 'Remark_08']);
 
             return !!(
                 dueDate ||
@@ -401,6 +502,7 @@
                 issueDate ||
                 note ||
                 inv ||
+                openWo ||
                 qty > 0
             );
         }
@@ -432,6 +534,68 @@
             if (text.includes('เบิกแล้ว')) return 'status-complete';
             if (text.includes('รอเบิก')) return 'status-pending';
             return 'status-default';
+        }
+
+        function getWoOpenInfo(item) {
+            const rawValue = String(
+                getValue(item, ['เปิด WO', 'Open WO', 'สถานะเปิด WO', 'WO Status', 'Remark_06', 'Remark_08']) || ''
+            ).trim();
+
+            if (!rawValue) {
+                return {
+                    raw: 'ยังไม่เปิด WO',
+                    mainText: 'ยังไม่เปิด WO',
+                    subText: 'ไม่มีข้อมูลการเปิด WO',
+                    ratioText: '',
+                    className: 'wo-open-box-red',
+                    pillClass: 'wo-open-red',
+                    pillText: 'ยังไม่เปิด',
+                    isComplete: false
+                };
+            }
+
+            const text = rawValue.toLowerCase();
+            const ratioMatch = rawValue.match(/(\d+)\s*\/\s*(\d+)/);
+            const openedQty = ratioMatch ? parseInt(ratioMatch[1], 10) : null;
+            const totalQty = ratioMatch ? parseInt(ratioMatch[2], 10) : null;
+            const hasRatio = Number.isFinite(openedQty) && Number.isFinite(totalQty);
+
+            let isComplete = false;
+
+            if (text.includes('ยังไม่ครบ')) {
+                isComplete = false;
+            } else if (text.includes('ยังไม่เปิด')) {
+                isComplete = false;
+            } else if (text.includes('ไม่ครบ')) {
+                isComplete = false;
+            } else if (hasRatio) {
+                isComplete = openedQty >= totalQty;
+            } else if (text.includes('ครบ')) {
+                isComplete = true;
+            }
+
+            let pillText = isComplete ? 'เปิดครบ' : 'ยังไม่ครบ';
+            if (text.includes('ยังไม่เปิด')) {
+                pillText = 'ยังไม่เปิด';
+            }
+
+            let subText = rawValue;
+            if (text.includes('เปิด wo แล้ว')) {
+                subText = 'มีข้อมูลการเปิด WO แล้ว';
+            } else if (text.includes('ยังไม่เปิด')) {
+                subText = 'ยังไม่มีการเปิด WO';
+            }
+
+            return {
+                raw: rawValue,
+                mainText: rawValue,
+                subText: subText,
+                ratioText: hasRatio ? `${openedQty}/${totalQty}` : '',
+                className: isComplete ? 'wo-open-box-green' : 'wo-open-box-red',
+                pillClass: isComplete ? 'wo-open-green' : 'wo-open-red',
+                pillText: pillText,
+                isComplete: isComplete
+            };
         }
 
         function isPending(item) {
@@ -477,14 +641,17 @@
         function buildRow(item, isDone = false) {
             const statusText = getStatusText(item);
             const statusClass = getStatusClass(statusText);
-            const modelNo = getValue(item, ['Model No', 'ModelNo']) || '-';
+            const woOpen = getWoOpenInfo(item);
+
+            const nav = getValue(item, ['NAV No']) || '-';
+            const modelNo = nav;
             const planId = getValue(item, ['แผนผลิตประจำเดือน ID']) || '-';
             const description = getValue(item, ['Description']) || '-';
             const prodQty = getValue(item, ['จำนวนที่ต้องขึ้นผลิต']) || '-';
             const wo = getValue(item, ['รายการผลิต ID']) || '-';
-            const nav = getValue(item, ['NAV No']) || '-';
             const rmNo = getValue(item, ['RM No']) || '-';
-            const rmDesc = getValue(item, ['Description RM']) || '-';
+            const rmDescRaw = getValue(item, ['Description RM']) || '-';
+            const rmDesc = rmDescRaw === '-' ? '-' : String(rmDescRaw).substring(0, 5);
             const issueDate = getValue(item, ['Remark_05']) || '-';
             const note = getValue(item, ['Remark_07']) || '-';
             const qty = getValue(item, ['QTY']) || '0';
@@ -492,6 +659,22 @@
 
             return `
                 <tr class="transition-colors">
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="wo-open-box ${woOpen.className}">
+                                <div class="flex flex-col">
+                                    <span class="wo-open-pill ${woOpen.pillClass}">${woOpen.pillText}</span>
+                                    <div class="wo-open-main">${woOpen.mainText}</div>
+                                    <div class="wo-open-sub">${woOpen.subText}</div>
+                                    ${
+                                        woOpen.ratioText
+                                            ? `<div class="wo-open-count"><i data-lucide="package-check" class="w-3 h-3"></i><span>${woOpen.ratioText}</span></div>`
+                                            : ``
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                     <td class="px-6 py-6">
                         <div class="flex justify-center">
                             <div class="date-box">
@@ -580,11 +763,42 @@
             empty.style.display = 'none';
         }
 
+        function renderWoAlert(rows) {
+            const wrap = document.getElementById('woAlertWrap');
+            const list = document.getElementById('woAlertList');
+
+            list.innerHTML = '';
+
+            const alertRows = rows.filter(item => !getWoOpenInfo(item).isComplete);
+
+            if (!alertRows.length) {
+                wrap.style.display = 'none';
+                return;
+            }
+
+            alertRows.forEach(item => {
+                const wo = getValue(item, ['รายการผลิต ID']) || '-';
+                const woOpen = getWoOpenInfo(item);
+
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="wo-alert-item">
+                        <span>WO: ${wo}</span>
+                        <span>-</span>
+                        <span>${woOpen.mainText}</span>
+                    </div>
+                `);
+            });
+
+            wrap.style.display = 'block';
+            lucide.createIcons();
+        }
+
         function renderTable(data) {
             const cleanedData = (data || []).filter(isMeaningfulRow);
 
             if (!cleanedData.length) {
                 document.getElementById('summaryArea').style.display = 'none';
+                document.getElementById('woAlertWrap').style.display = 'none';
                 renderSection('pendingTable', 'pendingTableBody', 'pendingEmpty', [], false);
                 renderSection('completeTable', 'completeTableBody', 'completeEmpty', [], true);
                 return;
@@ -597,7 +811,7 @@
             const visibleRows = [...pendingRows, ...completeRows];
 
             const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr['QTY']) || 0), 0);
-            const models = [...new Set(visibleRows.map(d => getValue(d, ['Model No', 'ModelNo'])).filter(Boolean))].length;
+            const models = [...new Set(visibleRows.map(d => getValue(d, ['NAV No'])).filter(Boolean))].length;
             const rms = [...new Set(visibleRows.map(d => getValue(d, ['RM No'])).filter(Boolean))].length;
 
             document.getElementById('sumQty').innerText = totalQty.toLocaleString();
@@ -610,6 +824,7 @@
             document.getElementById('pendingCountText').textContent = `${pendingRows.length.toLocaleString()} รายการ`;
             document.getElementById('completeCountText').textContent = `${completeRows.length.toLocaleString()} รายการ`;
 
+            renderWoAlert(completeRows);
             renderSection('pendingTable', 'pendingTableBody', 'pendingEmpty', pendingRows, false);
             renderSection('completeTable', 'completeTableBody', 'completeEmpty', completeRows, true);
 

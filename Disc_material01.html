@@ -389,7 +389,6 @@
                 <table class="w-full text-left" id="pendingTable" style="display:none;">
                     <thead>
                         <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                            <th class="px-6 py-4 font-bold text-center">เปิด WO</th>
                             <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
                             <th class="px-6 py-4 font-bold">ข้อมูลแผน (Model & Plan)</th>
                             <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
@@ -835,26 +834,32 @@
 
             return `
                 <tr class="transition-colors">
-                    <td class="px-6 py-6">
-                        <div class="flex justify-center">
-                            <div class="wo-open-box ${woOpen.className}">
-                                <div class="flex flex-col">
-                                    <span class="wo-open-pill ${woOpen.pillClass}">${woOpen.pillText}</span>
-                                    ${
-                                        woOpen.mainText
-                                            ? `<div class="wo-open-main">${woOpen.mainText}</div>`
-                                            : ``
-                                    }
-                                    <div class="wo-open-sub">${woOpen.subText}</div>
-                                    ${
-                                        woOpen.ratioText
-                                            ? `<div class="wo-open-count"><i data-lucide="package-check" class="w-3 h-3"></i><span>${woOpen.ratioText}</span></div>`
-                                            : ``
-                                    }
+                    ${
+                        isDone
+                            ? `
+                            <td class="px-6 py-6">
+                                <div class="flex justify-center">
+                                    <div class="wo-open-box ${woOpen.className}">
+                                        <div class="flex flex-col">
+                                            <span class="wo-open-pill ${woOpen.pillClass}">${woOpen.pillText}</span>
+                                            ${
+                                                woOpen.mainText
+                                                    ? `<div class="wo-open-main">${woOpen.mainText}</div>`
+                                                    : ``
+                                            }
+                                            <div class="wo-open-sub">${woOpen.subText}</div>
+                                            ${
+                                                woOpen.ratioText
+                                                    ? `<div class="wo-open-count"><i data-lucide="package-check" class="w-3 h-3"></i><span>${woOpen.ratioText}</span></div>`
+                                                    : ``
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </td>
+                            </td>
+                            `
+                            : ``
+                    }
                     <td class="px-6 py-6">
                         <div class="flex justify-center">
                             <div class="date-box">

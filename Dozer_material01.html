@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ระบบติดตามรายการใบเบิก - Production Tracking</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .table-container {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .wo-badge {
+            font-family: monospace;
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border: 1px solid #c7d2fe;
+        }
+        .inv-badge {
+            font-family: monospace;
+            padding: 0.45rem 0.9rem;
+            border-radius: 0.75rem;
+            font-weight: 800;
+            font-size: 1rem;
+            display: inline-block;
+            border: 2px solid transparent;
+            min-width: 86px;
+        }
+        .inv-badge-missing {
+            background: #f8fafc;
+            color: #64748b;
+            border-color: #cbd5e1;
+        }
+        .model-text {
+            color: #1e293b;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+        .plan-name {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        .qty-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+        }
+        .qty-circle {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            color: #0f172a;
+            flex-shrink: 0;
+        }
+        .store-qty-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            color: #0f172a;
+            flex-shrink: 0;
+        }
+        .store-qty-match {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+            color: #047857;
+        }
+        .store-qty-mismatch {
+            background: #fff7ed;
+            border-color: #fdba74;
+            color: #c2410c;
+        }
+        .store-qty-missing {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+        .date-box {
+            background: #fff7ed;
+            border: 1px solid #ffedd5;
+            color: #9a3412;
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            min-width: 110px;
+        }
+        .date-box-green {
+            background: #ecfdf5;
+            border: 1px solid #bbf7d0;
+            color: #047857;
+        }
+        tr:hover {
+            background-color: #f8faff !important;
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 90px;
+        }
+        .status-pending {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fed7aa;
+        }
+        .status-complete {
+            background: #dcfce7;
+            color: #047857;
+            border: 1px solid #86efac;
+        }
+        .status-transfer {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: 1px solid #60a5fa;
+            box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.15) inset;
+        }
+        .status-default {
+            background: #f8fafc;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .remark-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            padding: 0.75rem 0.9rem;
+            border-radius: 0.9rem;
+            font-size: 0.82rem;
+            line-height: 1.35rem;
+            min-width: 180px;
+            max-width: 260px;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .section-header-pending {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+        }
+        .section-header-complete {
+            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+        }
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .section-badge-pending {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fdba74;
+        }
+        .section-badge-complete {
+            background: #dcfce7;
+            color: #047857;
+            border: 1px solid #86efac;
+        }
+        .empty-substate {
+            padding: 36px 20px;
+            text-align: center;
+            color: #94a3b8;
+        }
+        .wo-open-box {
+            min-width: 210px;
+            max-width: 270px;
+            border-radius: 1rem;
+            padding: 0.8rem 0.9rem;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .wo-open-box-green {
+            background: #ecfdf5;
+            border-color: #bbf7d0;
+        }
+        .wo-open-box-red {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+        .wo-open-box-over {
+            background: #fff1f2;
+            border-color: #fda4af;
+        }
+        .wo-open-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-bottom: 0.45rem;
+        }
+        .wo-open-green {
+            background: #dcfce7;
+            color: #047857;
+            border: 1px solid #86efac;
+        }
+        .wo-open-red {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+        .wo-open-over {
+            background: #ffe4e6;
+            color: #be123c;
+            border: 1px solid #fb7185;
+        }
+        .wo-open-main {
+            font-size: 0.82rem;
+            font-weight: 700;
+            line-height: 1.35rem;
+            color: #0f172a;
+            word-break: break-word;
+        }
+        .wo-open-sub {
+            font-size: 0.72rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+            word-break: break-word;
+        }
+        .wo-open-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-family: monospace;
+            font-size: 0.78rem;
+            font-weight: 700;
+            margin-top: 0.45rem;
+            padding: 0.22rem 0.5rem;
+            border-radius: 0.6rem;
+            background: rgba(255,255,255,0.75);
+            border: 1px solid rgba(148,163,184,0.25);
+            color: #0f172a;
+        }
+        .wo-alert-wrap {
+            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+            border: 1px solid #fecaca;
+            border-radius: 1.25rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+        .wo-alert-wrap-over {
+            background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%);
+            border-color: #fda4af;
+        }
+        .wo-alert-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ffffff;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            border-radius: 999px;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .wo-alert-item-over {
+            border-color: #fda4af;
+            color: #be123c;
+            background: #fff7f8;
+        }
+        .wo-alert-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.85rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-indigo-600 text-white p-1 rounded-lg">
+                        <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+                    </span>
+                    <h1 class="text-2xl font-bold text-slate-800">รายการใบเบิกประจำวัน</h1>
+                </div>
+                <p class="text-slate-500 text-sm ml-8">เช็ควันที่กำหนดใช้ เลข WO และรุ่น เพื่อการเบิกจ่ายที่แม่นยำ</p>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="refreshBtn" class="flex items-center gap-2 cursor-pointer bg-indigo-600 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    รีเฟรชข้อมูล
+                </button>
+            </div>
+        </header>
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+            <div id="statusText" class="inline-flex items-center gap-2 text-sm text-slate-500">
+                <i data-lucide="loader-circle" class="w-4 h-4"></i>
+                <span>กำลังโหลดข้อมูล...</span>
+            </div>
+            <div class="text-right">
+                <div id="lastUpdated" class="text-slate-400 text-xs">อัปเดตล่าสุด: -</div>
+                <div id="sheetUpdated" class="text-slate-400 text-xs">ข้อมูลจากชีต: -</div>
+            </div>
+        </div>
+
+        <div id="woAlertWrap" class="wo-alert-wrap">
+            <div class="flex items-center gap-2 text-red-700 font-bold">
+                <i data-lucide="triangle-alert" class="w-5 h-5"></i>
+                <span>แจ้งเตือนการเปิด WO ของรายการที่เบิกแล้ว</span>
+            </div>
+            <p id="woAlertDesc" class="text-sm text-red-600 mt-1">รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด</p>
+            <div id="woAlertList" class="wo-alert-list"></div>
+        </div>
+
+        <div id="summaryArea" class="hidden grid grid-cols-2 md:grid-cols-7 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-2xl border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">จำนวนรุ่น</p>
+                <p id="sumModels" class="text-xl font-bold text-slate-800">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">รวมจำนวนเบิก (ตัว)</p>
+                <p id="sumQty" class="text-xl font-bold text-indigo-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-100">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">จำนวนรายการทั้งหมด</p>
+                <p id="sumRows" class="text-xl font-bold text-slate-800">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-amber-100">
+                <p class="text-[10px] uppercase font-bold text-amber-500 mb-1">รอเบิก</p>
+                <p id="sumPending" class="text-xl font-bold text-amber-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-emerald-100">
+                <p class="text-[10px] uppercase font-bold text-emerald-500 mb-1">เบิกแล้ว (15 วัน)</p>
+                <p id="sumComplete" class="text-xl font-bold text-emerald-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-rose-100">
+                <p class="text-[10px] uppercase font-bold text-rose-500 mb-1">ยังไม่เปิด WO</p>
+                <p id="sumWOPending" class="text-xl font-bold text-rose-600">-</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-emerald-100">
+                <p class="text-[10px] uppercase font-bold text-emerald-500 mb-1">เปิด WO แล้ว</p>
+                <p id="sumWOOpen" class="text-xl font-bold text-emerald-600">-</p>
+            </div>
+        </div>
+
+        <div class="table-container mb-8">
+            <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3 section-header-pending">
+                <div class="flex items-center gap-3">
+                    <span class="section-badge section-badge-pending">
+                        <i data-lucide="clock-3" class="w-4 h-4"></i>
+                        รอเบิก
+                    </span>
+                    <h2 class="font-bold text-slate-700 text-lg">รายการที่รอเบิกทั้งหมด</h2>
+                </div>
+                <div id="pendingCountText" class="text-slate-500 text-sm">0 รายการ</div>
+            </div>
+
+            <div id="pendingEmpty" class="empty-substate">
+                <i data-lucide="inbox" class="w-10 h-10 text-slate-200 mx-auto mb-3"></i>
+                <p>ไม่มีรายการรอเบิก</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="pendingTable" style="display:none;">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (MODEL & PLAN)</th>
+                            <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
+                            <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
+                            <th class="px-6 py-4 font-bold text-center">สถานะ</th>
+                            <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
+                            <th class="px-6 py-4 font-bold">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pendingTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3 section-header-complete">
+                <div class="flex items-center gap-3">
+                    <span class="section-badge section-badge-complete">
+                        <i data-lucide="badge-check" class="w-4 h-4"></i>
+                        เบิกแล้ว
+                    </span>
+                    <h2 class="font-bold text-slate-700 text-lg">รายการที่เบิกแล้ว ย้อนหลัง 15 วัน</h2>
+                </div>
+                <div id="completeCountText" class="text-slate-500 text-sm">0 รายการ</div>
+            </div>
+
+            <div id="completeEmpty" class="empty-substate">
+                <i data-lucide="archive" class="w-10 h-10 text-slate-200 mx-auto mb-3"></i>
+                <p>ไม่มีรายการเบิกแล้วในช่วง 15 วันล่าสุด</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left" id="completeTable" style="display:none;">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                            <th class="px-6 py-4 font-bold text-center">เปิด WO</th>
+                            <th class="px-6 py-4 font-bold text-center">วันที่กำหนดใช้</th>
+                            <th class="px-6 py-4 font-bold">ข้อมูลแผน (MODEL & PLAN)</th>
+                            <th class="px-6 py-4 font-bold">เลขที่ใบเบิก (WO)</th>
+                            <th class="px-6 py-4 font-bold text-center">จำนวน (QTY)</th>
+                            <th class="px-6 py-4 font-bold text-center">สถานะ</th>
+                            <th class="px-6 py-4 font-bold text-center">วันที่เบิกจริง</th>
+                            <th class="px-6 py-4 font-bold text-center">INV</th>
+                            <th class="px-6 py-4 font-bold">หมายเหตุ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="completeTableBody" class="divide-y divide-slate-100"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="mt-6 text-center text-slate-400 text-xs">
+            ออกแบบเพื่อฝ่ายผลิตและสโตร์ - Dozer Production Dashboard
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcZD9-UF6cqhN0OhBoyXyk8XzKqwhFutj6Hu6TuBFgk3PsHsSr69uTzGmTz0LMsDJl/exec";
+        const REFRESH_INTERVAL = 10000;
+        const COMPLETED_LOOKBACK_DAYS = 15;
+
+        let currentVersion = null;
+        let currentRows = [];
+        let isLoading = false;
+        let invColorMap = {};
+
+        document.getElementById('refreshBtn').addEventListener('click', () => loadData(true));
+
+        function parseFlexibleDate(dateValue) {
+            if (!dateValue) return null;
+
+            const raw = String(dateValue).trim();
+            if (!raw) return null;
+
+            if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) {
+                const [d, m, y] = raw.split('/').map(Number);
+                const date = new Date(y, m - 1, d);
+                return isNaN(date) ? null : date;
+            }
+
+            const direct = new Date(raw);
+            if (!isNaN(direct)) return direct;
+
+            const parts = raw.split(/[\/\-]/);
+            if (parts.length === 3) {
+                let [a, b, c] = parts.map(Number);
+                if (!a || !b || !c) return null;
+
+                if (String(c).length === 4) {
+                    const ddmmyyyy = new Date(c, b - 1, a);
+                    if (!isNaN(ddmmyyyy)) return ddmmyyyy;
+                }
+            }
+
+            return null;
+        }
+
+        function formatDate(dateValue) {
+            if (!dateValue) return '-';
+
+            const date = parseFlexibleDate(dateValue);
+            if (!date || isNaN(date)) return dateValue;
+
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        function formatDateTime(dateValue) {
+            if (!dateValue) return '-';
+            const date = parseFlexibleDate(dateValue);
+            if (!date || isNaN(date)) return dateValue;
+            return date.toLocaleString('th-TH');
+        }
+
+        function setStatus(message, icon = 'info') {
+            const statusText = document.getElementById('statusText');
+            statusText.innerHTML = `
+                <i data-lucide="${icon}" class="w-4 h-4"></i>
+                <span>${message}</span>
+            `;
+            lucide.createIcons();
+        }
+
+        function getValue(item, keys = []) {
+            for (const key of keys) {
+                if (item[key] !== undefined && item[key] !== null && String(item[key]).trim() !== '') {
+                    return item[key];
+                }
+            }
+            return '';
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function parseNumber(value) {
+            if (value === null || value === undefined) return null;
+            const cleaned = String(value).replace(/,/g, '').trim();
+            if (!cleaned) return null;
+            const num = Number(cleaned);
+            return Number.isFinite(num) ? num : null;
+        }
+
+        function normalizeInvKey(value) {
+            return String(value || '').trim();
+        }
+
+        function generatePastelColorByIndex(index) {
+            const palette = [
+                { background: '#FDE68A', border: '#F59E0B', text: '#92400E' },
+                { background: '#BFDBFE', border: '#3B82F6', text: '#1D4ED8' },
+                { background: '#C7F9CC', border: '#22C55E', text: '#166534' },
+                { background: '#FBCFE8', border: '#EC4899', text: '#9D174D' },
+                { background: '#DDD6FE', border: '#8B5CF6', text: '#5B21B6' },
+                { background: '#A7F3D0', border: '#10B981', text: '#065F46' },
+                { background: '#FED7AA', border: '#F97316', text: '#9A3412' },
+                { background: '#FECDD3', border: '#F43F5E', text: '#9F1239' },
+                { background: '#BAE6FD', border: '#0EA5E9', text: '#075985' },
+                { background: '#E9D5FF', border: '#A855F7', text: '#6B21A8' },
+                { background: '#D9F99D', border: '#84CC16', text: '#3F6212' },
+                { background: '#F5D0FE', border: '#D946EF', text: '#86198F' }
+            ];
+
+            return palette[index % palette.length];
+        }
+
+        function buildInvColorMap(rows) {
+            const map = {};
+            const uniqueInvs = [];
+
+            rows.forEach(item => {
+                const rawInv = getValue(item, ['INV', 'Inv', 'inv']);
+                const key = normalizeInvKey(rawInv);
+                if (key && !uniqueInvs.includes(key)) {
+                    uniqueInvs.push(key);
+                }
+            });
+
+            uniqueInvs.sort();
+
+            uniqueInvs.forEach((key, index) => {
+                map[key] = generatePastelColorByIndex(index);
+            });
+
+            return map;
+        }
+
+        function getStoreIssueQtyInfo(item) {
+            const rawValue = getValue(item, ['จำนวนสโตร์จ่าย', 'Store Issue Qty', 'Store Qty', 'จำนวนจ่าย', 'Remark_09']);
+            const qtyValue = parseNumber(getValue(item, ['QTY']));
+            const storeQty = parseNumber(rawValue);
+
+            if (storeQty === null) {
+                return {
+                    display: '-',
+                    className: 'store-qty-missing'
+                };
+            }
+
+            if (qtyValue === null) {
+                return {
+                    display: storeQty.toLocaleString(),
+                    className: 'store-qty-match'
+                };
+            }
+
+            return {
+                display: storeQty.toLocaleString(),
+                className: storeQty === qtyValue ? 'store-qty-match' : 'store-qty-mismatch'
+            };
+        }
+
+        function getInvInfo(item) {
+            const rawInv = getValue(item, ['INV', 'Inv', 'inv']);
+            const invDisplay = rawInv && String(rawInv).trim() !== '' ? String(rawInv).trim() : '-';
+            const key = normalizeInvKey(invDisplay);
+
+            if (invDisplay === '-' || !key) {
+                return {
+                    display: '-',
+                    className: 'inv-badge-missing',
+                    style: ''
+                };
+            }
+
+            const color = invColorMap[key] || generatePastelColorByIndex(0);
+
+            return {
+                display: invDisplay,
+                className: '',
+                style: `background:${color.background}; color:${color.text}; border-color:${color.border};`
+            };
+        }
+
+        function isMeaningfulRow(item) {
+            const wo = getValue(item, ['รายการผลิต ID']);
+            const model = getValue(item, ['ModelNo', 'Model No']);
+            const plan = getValue(item, ['แผนผลิตประจำเดือน ID']);
+            const qty = parseInt(getValue(item, ['QTY']) || '0', 10) || 0;
+            const dueDate = getValue(item, ['วันที่กำหนดใช้ของ']);
+            const inv = getValue(item, ['INV', 'Inv', 'inv']);
+            const openWo = getValue(item, ['เปิด WO', 'Open WO', 'สถานะเปิด WO', 'WO Status', 'Remark_06', 'Remark_08']);
+            const storeIssueQty = getValue(item, ['จำนวนสโตร์จ่าย', 'Store Issue Qty', 'Store Qty', 'จำนวนจ่าย', 'Remark_09']);
+
+            return !!(wo || model || plan || dueDate || inv || openWo || storeIssueQty || qty > 0);
+        }
+
+        function getStatusText(item) {
+            const remark02 = String(item['Remark_02'] || '').trim();
+            const remark05 = String(item['Remark_05'] || '').trim();
+            const remark07 = String(item['Remark_07'] || '').trim().toLowerCase();
+            const text = remark02.toLowerCase();
+
+            if (
+                text.includes('เบิกแล้ว') ||
+                text.includes('complete') ||
+                text.includes('completed') ||
+                text.includes('done') ||
+                remark05
+            ) {
+                return 'เบิกแล้ว';
+            }
+
+            if (remark07.includes('spare part')) {
+                return 'งานโอนย้ายคลัง';
+            }
+
+            if (!remark02) return 'รอเบิก';
+
+            return 'รอเบิก';
+        }
+
+        function getStatusClass(statusText) {
+            const text = String(statusText || '').trim().toLowerCase();
+
+            if (text.includes('งานโอนย้ายคลัง')) return 'status-transfer';
+            if (text.includes('เบิกแล้ว')) return 'status-complete';
+            if (text.includes('รอเบิก')) return 'status-pending';
+            return 'status-default';
+        }
+
+        function getWoOpenInfo(item) {
+            const rawValue = String(
+                getValue(item, ['เปิด WO', 'Open WO', 'สถานะเปิด WO', 'WO Status', 'Remark_06', 'Remark_08']) || ''
+            ).trim();
+
+            if (!rawValue) {
+                return {
+                    raw: 'ยังไม่เปิด WO',
+                    mainText: '',
+                    subText: 'ไม่มีข้อมูลการเปิด WO',
+                    ratioText: '',
+                    className: 'wo-open-box-red',
+                    pillClass: 'wo-open-red',
+                    pillText: 'ยังไม่เปิด',
+                    isComplete: false,
+                    isOver: false
+                };
+            }
+
+            const text = rawValue.toLowerCase();
+            const ratioMatch = rawValue.match(/(\d+)\s*\/\s*(\d+)/);
+            const openedQty = ratioMatch ? parseInt(ratioMatch[1], 10) : null;
+            const totalQty = ratioMatch ? parseInt(ratioMatch[2], 10) : null;
+            const hasRatio = Number.isFinite(openedQty) && Number.isFinite(totalQty);
+            const isOver = hasRatio && openedQty > totalQty;
+
+            let isComplete = false;
+
+            if (isOver) {
+                isComplete = false;
+            } else if (text.includes('ยังไม่ครบ')) {
+                isComplete = false;
+            } else if (text.includes('ยังไม่เปิด')) {
+                isComplete = false;
+            } else if (text.includes('ไม่ครบ')) {
+                isComplete = false;
+            } else if (hasRatio) {
+                isComplete = openedQty >= totalQty;
+            } else if (text.includes('ครบ')) {
+                isComplete = true;
+            }
+
+            let pillText = isComplete ? 'เปิดครบ' : 'ยังไม่ครบ';
+            let pillClass = isComplete ? 'wo-open-green' : 'wo-open-red';
+            let className = isComplete ? 'wo-open-box-green' : 'wo-open-box-red';
+
+            if (text.includes('ยังไม่เปิด')) {
+                pillText = 'ยังไม่เปิด';
+            }
+
+            if (isOver) {
+                pillText = 'เปิดเกิน';
+                pillClass = 'wo-open-over';
+                className = 'wo-open-box-over';
+            }
+
+            let subText = rawValue;
+
+            if (isOver) {
+                subText = 'จำนวนที่เปิด WO มากกว่าจำนวนที่กำหนด';
+            } else if (text.includes('เปิด wo แล้ว')) {
+                subText = 'มีข้อมูลการเปิด WO แล้ว';
+            } else if (text.includes('ยังไม่เปิด')) {
+                subText = 'ยังไม่มีการเปิด WO';
+            }
+
+            return {
+                raw: rawValue,
+                mainText: '',
+                subText: subText,
+                ratioText: hasRatio ? `${openedQty}/${totalQty}` : '',
+                className: className,
+                pillClass: pillClass,
+                pillText: pillText,
+                isComplete: isComplete,
+                isOver: isOver
+            };
+        }
+
+        function getWOCountStatus(item) {
+            const info = getWoOpenInfo(item);
+            if (!info.raw || info.pillText === 'ยังไม่เปิด') return 'pending';
+            return info.isComplete ? 'open' : 'pending';
+        }
+
+        function isPending(item) {
+            const status = getStatusText(item);
+            return status === 'รอเบิก' || status === 'งานโอนย้ายคลัง';
+        }
+
+        function isCompleted(item) {
+            return getStatusText(item) === 'เบิกแล้ว';
+        }
+
+        function isCompletedWithin15Days(item) {
+            if (!isCompleted(item)) return false;
+
+            const issueDate = parseFlexibleDate(item['Remark_05']);
+            if (!issueDate) return false;
+
+            const today = new Date();
+            today.setHours(23, 59, 59, 999);
+
+            const start = new Date();
+            start.setHours(0, 0, 0, 0);
+            start.setDate(start.getDate() - COMPLETED_LOOKBACK_DAYS);
+
+            return issueDate >= start && issueDate <= today;
+        }
+
+        function sortPendingRows(rows) {
+            return [...rows].sort((a, b) => {
+                const aDate = parseFlexibleDate(a['วันที่กำหนดใช้ของ']) || new Date(8640000000000000);
+                const bDate = parseFlexibleDate(b['วันที่กำหนดใช้ของ']) || new Date(8640000000000000);
+                return aDate - bDate;
+            });
+        }
+
+        function sortCompletedRows(rows) {
+            return [...rows].sort((a, b) => {
+                const aDate = parseFlexibleDate(a['Remark_05']) || new Date(0);
+                const bDate = parseFlexibleDate(b['Remark_05']) || new Date(0);
+                return bDate - aDate;
+            });
+        }
+
+        function buildPendingRow(item) {
+            const statusText = getStatusText(item);
+            const statusClass = getStatusClass(statusText);
+            const modelNo = getValue(item, ['ModelNo', 'Model No']) || '-';
+            const note = getValue(item, ['Remark_07']) || '-';
+
+            return `
+                <tr class="transition-colors">
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="date-box">
+                                <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">กำหนดใช้</div>
+                                <div class="text-sm font-bold">${formatDate(item['วันที่กำหนดใช้ของ'])}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col">
+                            <span class="model-text">${escapeHtml(modelNo)}</span>
+                            <span class="plan-name font-medium">${escapeHtml(item['แผนผลิตประจำเดือน ID'] || '-')}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${escapeHtml(item.Description || '-')}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col gap-1">
+                            <span class="wo-badge w-fit">${escapeHtml(item['รายการผลิต ID'] || '-')}</span>
+                            <div class="flex items-center gap-1 text-[10px] text-slate-400 ml-1">
+                                <i data-lucide="tag" class="w-3 h-3"></i>
+                                <span>NAV: ${escapeHtml(item['NAV No'] || '-')}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="qty-circle">${escapeHtml(item.QTY || '0')}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="status-pill ${statusClass}">${escapeHtml(statusText)}</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="text-slate-300">-</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="text-slate-300">-</span>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="remark-box">${escapeHtml(note)}</div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function buildCompleteRow(item) {
+            const statusText = getStatusText(item);
+            const statusClass = getStatusClass(statusText);
+            const modelNo = getValue(item, ['ModelNo', 'Model No']) || '-';
+            const issueDate = getValue(item, ['Remark_05']) || '-';
+            const note = getValue(item, ['Remark_07']) || '-';
+            const qty = getValue(item, ['QTY']) || '0';
+            const invInfo = getInvInfo(item);
+            const woOpen = getWoOpenInfo(item);
+
+            return `
+                <tr class="transition-colors">
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="wo-open-box ${woOpen.className}">
+                                <div class="flex flex-col">
+                                    <span class="wo-open-pill ${woOpen.pillClass}">${woOpen.pillText}</span>
+                                    ${
+                                        woOpen.mainText
+                                            ? `<div class="wo-open-main">${woOpen.mainText}</div>`
+                                            : ``
+                                    }
+                                    <div class="wo-open-sub">${escapeHtml(woOpen.subText)}</div>
+                                    ${
+                                        woOpen.ratioText
+                                            ? `<div class="wo-open-count"><i data-lucide="package-check" class="w-3 h-3"></i><span>${escapeHtml(woOpen.ratioText)}</span></div>`
+                                            : ``
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="date-box">
+                                <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">กำหนดใช้</div>
+                                <div class="text-sm font-bold">${formatDate(item['วันที่กำหนดใช้ของ'])}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col">
+                            <span class="model-text">${escapeHtml(modelNo)}</span>
+                            <span class="plan-name font-medium">${escapeHtml(item['แผนผลิตประจำเดือน ID'] || '-')}</span>
+                            <span class="text-[10px] text-slate-400 mt-1 truncate max-w-xs">${escapeHtml(item.Description || '-')}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex flex-col gap-1">
+                            <span class="wo-badge w-fit">${escapeHtml(item['รายการผลิต ID'] || '-')}</span>
+                            <div class="flex items-center gap-1 text-[10px] text-slate-400 ml-1">
+                                <i data-lucide="tag" class="w-3 h-3"></i>
+                                <span>NAV: ${escapeHtml(item['NAV No'] || '-')}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="flex justify-center">
+                            <div class="qty-circle">${escapeHtml(qty)}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="status-pill ${statusClass}">${escapeHtml(statusText)}</span>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <div class="flex justify-center">
+                            <div class="date-box date-box-green">
+                                <div class="text-[10px] font-bold uppercase opacity-60 mb-0.5">เบิกจริง</div>
+                                <div class="text-sm font-bold">${formatDate(issueDate)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        <span class="inv-badge ${invInfo.className}" style="${invInfo.style || ''}">
+                            ${escapeHtml(invInfo.display)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-6">
+                        <div class="remark-box">${escapeHtml(note)}</div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderSection(tableId, bodyId, emptyId, rows, isDone) {
+            const table = document.getElementById(tableId);
+            const body = document.getElementById(bodyId);
+            const empty = document.getElementById(emptyId);
+
+            body.innerHTML = '';
+
+            if (!rows.length) {
+                table.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            rows.forEach(item => {
+                const rowHtml = isDone ? buildCompleteRow(item) : buildPendingRow(item);
+                body.insertAdjacentHTML('beforeend', rowHtml);
+            });
+
+            table.style.display = 'table';
+            empty.style.display = 'none';
+        }
+
+        function renderWoAlert(rows) {
+            const wrap = document.getElementById('woAlertWrap');
+            const list = document.getElementById('woAlertList');
+            const desc = document.getElementById('woAlertDesc');
+
+            list.innerHTML = '';
+
+            const alertRows = rows.filter(item => !getWoOpenInfo(item).isComplete);
+
+            if (!alertRows.length) {
+                wrap.style.display = 'none';
+                wrap.classList.remove('wo-alert-wrap-over');
+                desc.textContent = 'รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด';
+                return;
+            }
+
+            const hasOver = alertRows.some(item => getWoOpenInfo(item).isOver);
+
+            if (hasOver) {
+                wrap.classList.add('wo-alert-wrap-over');
+                desc.textContent = 'รายการด้านล่างมี WO ที่เปิดไม่ครบ ยังไม่เปิด หรือเปิดเกินจำนวน';
+            } else {
+                wrap.classList.remove('wo-alert-wrap-over');
+                desc.textContent = 'รายการด้านล่างยังเปิด WO ไม่ครบ หรือยังไม่เปิด';
+            }
+
+            alertRows.forEach(item => {
+                const wo = getValue(item, ['รายการผลิต ID']) || '-';
+                const woOpen = getWoOpenInfo(item);
+                const extraClass = woOpen.isOver ? 'wo-alert-item-over' : '';
+
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="wo-alert-item ${extraClass}">
+                        <span>WO: ${escapeHtml(wo)}</span>
+                        <span>-</span>
+                        <span>${escapeHtml(woOpen.raw)}</span>
+                    </div>
+                `);
+            });
+
+            wrap.style.display = 'block';
+            lucide.createIcons();
+        }
+
+        function renderTable(rawData) {
+            const cleanedData = rawData.filter(isMeaningfulRow);
+            const summary = document.getElementById('summaryArea');
+
+            if (!cleanedData.length) {
+                summary.style.display = 'none';
+                document.getElementById('woAlertWrap').style.display = 'none';
+                renderSection('pendingTable', 'pendingTableBody', 'pendingEmpty', [], false);
+                renderSection('completeTable', 'completeTableBody', 'completeEmpty', [], true);
+                return;
+            }
+
+            summary.style.display = 'grid';
+
+            const pendingRows = sortPendingRows(cleanedData.filter(isPending));
+            const completeRows = sortCompletedRows(cleanedData.filter(isCompletedWithin15Days));
+            const visibleRows = [...pendingRows, ...completeRows];
+
+            invColorMap = buildInvColorMap(completeRows);
+
+            const totalQty = visibleRows.reduce((acc, curr) => acc + (parseInt(curr.QTY) || 0), 0);
+            const models = [...new Set(visibleRows.map(d => getValue(d, ['ModelNo', 'Model No'])).filter(Boolean))].length;
+            const woOpenCount = completeRows.filter(item => getWOCountStatus(item) === 'open').length;
+            const woPendingCount = completeRows.filter(item => getWOCountStatus(item) === 'pending').length;
+
+            document.getElementById('sumQty').innerText = totalQty.toLocaleString();
+            document.getElementById('sumModels').innerText = models + ' รุ่น';
+            document.getElementById('sumRows').innerText = visibleRows.length.toLocaleString();
+            document.getElementById('sumPending').innerText = pendingRows.length.toLocaleString();
+            document.getElementById('sumComplete').innerText = completeRows.length.toLocaleString();
+            document.getElementById('sumWOPending').innerText = woPendingCount.toLocaleString();
+            document.getElementById('sumWOOpen').innerText = woOpenCount.toLocaleString();
+
+            document.getElementById('pendingCountText').textContent = `${pendingRows.length.toLocaleString()} รายการ`;
+            document.getElementById('completeCountText').textContent = `${completeRows.length.toLocaleString()} รายการ`;
+
+            renderWoAlert(completeRows);
+            renderSection('pendingTable', 'pendingTableBody', 'pendingEmpty', pendingRows, false);
+            renderSection('completeTable', 'completeTableBody', 'completeEmpty', completeRows, true);
+
+            lucide.createIcons();
+        }
+
+        async function loadData(forceRender = false) {
+            if (isLoading) return;
+            isLoading = true;
+
+            const refreshBtn = document.getElementById('refreshBtn');
+
+            try {
+                setStatus('กำลังตรวจสอบข้อมูลล่าสุด...', 'loader-circle');
+                refreshBtn.disabled = true;
+
+                const response = await fetch(`${WEB_APP_URL}?t=${Date.now()}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const payload = await response.json();
+                const rows = Array.isArray(payload.rows) ? payload.rows : [];
+                const newVersion = payload.version || payload.lastUpdated || JSON.stringify(rows);
+
+                document.getElementById('sheetUpdated').textContent =
+                    'ข้อมูลจากชีต: ' + formatDateTime(payload.lastUpdated || new Date().toISOString());
+
+                if (forceRender || currentVersion !== newVersion || currentRows.length === 0) {
+                    currentVersion = newVersion;
+                    currentRows = rows;
+                    renderTable(currentRows);
+
+                    document.getElementById('lastUpdated').textContent =
+                        'อัปเดตล่าสุด: ' + new Date().toLocaleString('th-TH');
+
+                    setStatus(`โหลดข้อมูลสำเร็จ ${rows.length} รายการ`, 'badge-check');
+                } else {
+                    setStatus('ยังไม่มีการเปลี่ยนแปลงข้อมูล', 'clock-3');
+                }
+            } catch (error) {
+                console.error(error);
+
+                if (currentRows.length > 0) {
+                    renderTable(currentRows);
+                    setStatus(`เชื่อมต่อไม่สำเร็จ กำลังแสดงข้อมูลเดิม ${currentRows.length} รายการ`, 'wifi-off');
+                } else {
+                    setStatus('โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบ Web App URL หรือสิทธิ์การเข้าถึง', 'triangle-alert');
+                    renderTable([]);
+                }
+            } finally {
+                refreshBtn.disabled = false;
+                isLoading = false;
+                lucide.createIcons();
+            }
+        }
+
+        loadData(true);
+        setInterval(() => loadData(false), REFRESH_INTERVAL);
+    </script>
+</body>
+</html>
